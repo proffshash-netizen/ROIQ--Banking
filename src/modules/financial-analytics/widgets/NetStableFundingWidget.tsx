@@ -1,0 +1,80 @@
+// Net Stable Funding Ratio (NSFR) Gauge Widget
+import React from "react";
+import ReactEChartsCore from "echarts-for-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import type { NSFRVM } from "../types";
+import { formatCurrency } from "../transformers";
+import { StatusBadge, MetricRow, AIInsight, getComplianceVariant } from "./shared";
+import { ShieldAlert } from "lucide-react";
+
+interface Props {
+  data: NSFRVM;
+}
+
+export const NetStableFundingWidget: React.FC<Props> = ({ data }) => {
+  const option = {
+    series: [
+      {
+        type: "gauge",
+        startAngle: 180,
+        endAngle: 0,
+        min: 0,
+        max: 200,
+        radius: "100%",
+        center: ["50%", "85%"],
+        axisLine: {
+          lineStyle: {
+            width: 8,
+            color: [
+              [0.5, "hsl(346 84% 61%)"],
+              [0.6, "hsl(43 96% 56%)"],
+              [1, "hsl(142 71% 45%)"],
+            ],
+          },
+        },
+        pointer: {
+          icon: "path://M12.8,0.7l12,80.1c1.2,7.8-4,14.9-11.8,16.1c-0.8,0.1-1.5,0.1-2.3,0l-12-80.1C-1.2,9-0.1,1.2,7.7,0C8.5-0.1,9.3-0.1,10.1,0C11.1,0.1,12,0.3,12.8,0.7z",
+          length: "75%",
+          width: 4,
+          offsetCenter: [0, 5],
+          itemStyle: {
+            color: "hsl(240 5% 64.9%)",
+          },
+        },
+        axisTick: { show: false },
+        splitLine: { show: false },
+        axisLabel: { show: false },
+        detail: {
+          valueAnimation: true,
+          offsetCenter: [0, -15],
+          fontSize: 22,
+          fontWeight: "bold",
+          formatter: "{value}%",
+          color: "hsl(0 0% 98%)",
+        },
+        data: [{ value: data.ratio }],
+      },
+    ],
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">Net Stable Funding Ratio (NSFR)</CardTitle>
+        <ShieldAlert className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-center" style={{ height: 120 }}>
+          <ReactEChartsCore key={`nsfr-${data.ratio}`} option={option} style={{ height: "100%", width: "100%" }} notMerge />
+        </div>
+        <div className="flex justify-between items-center mb-3">
+          <StatusBadge label={data.complianceStatus} variant={getComplianceVariant(data.complianceStatus)} />
+          <span className="text-[10px] text-muted-foreground">Stability Score: {data.fundingStabilityScore}</span>
+        </div>
+        <MetricRow label="Available Stable Funding" value={formatCurrency(data.availableStableFunding)} />
+        <MetricRow label="Required Stable Funding" value={formatCurrency(data.requiredStableFunding)} />
+        <AIInsight text={data.aiAssessment} />
+      </CardContent>
+    </Card>
+  );
+};

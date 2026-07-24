@@ -1,0 +1,9 @@
+# Backend requirements
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic[dotenv]
+pyjwt
+sse-starlette
+httpx
+pytest
