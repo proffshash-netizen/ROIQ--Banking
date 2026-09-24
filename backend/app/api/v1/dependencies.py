@@ -9,58 +9,45 @@ from ...interfaces.ai_analysis_service import AIAnalysisService
 from ...interfaces.financial_data_service import FinancialDataService
 from ...schemas.auth import UserContext
 from ...services.analysis_service import AnalysisService
+from ...services.ai_analysis_service import AIAnalysisServiceImpl
 from ...services.auth_service import AuthService
 from ...services.health_service import HealthService
+
 
 security_bearer = HTTPBearer()
 
 
 class PlaceholderFinancialDataService(FinancialDataService):
-    """Temporary placeholder implementation.
-
-    TODO: Implemented by Backend Developer 1
-    """
+    """Temporary financial data implementation."""
 
     async def get_company(self, company_id: str) -> dict[str, object]:
-        return {"id": company_id, "name": f"Placeholder Company ({company_id})"}
+        return {
+            "id": company_id,
+            "name": f"Placeholder Company ({company_id})",
+        }
 
     async def get_financial_statements(
         self, company_id: str
     ) -> list[dict[str, object]]:
-        return [{"company_id": company_id, "statement": "placeholder statement"}]
+        return [
+            {
+                "company_id": company_id,
+                "statement": "placeholder statement",
+            }
+        ]
 
-    async def get_market_data(self, symbol: str) -> dict[str, object]:
-        return {"symbol": symbol, "price": 150.0}
+    async def get_market_data(
+        self, symbol: str
+    ) -> dict[str, object]:
+        return {
+            "symbol": symbol,
+            "price": 150.0,
+        }
 
     async def get_macro_data(self) -> dict[str, object]:
-        return {"economy_status": "stable"}
-
-
-class PlaceholderAIAnalysisService(AIAnalysisService):
-    """Temporary placeholder implementation.
-
-    TODO: Implemented by Backend Developer 2
-    """
-
-    async def analyze_company(
-        self, company_id: str, context: dict[str, object] | None = None
-    ) -> dict[str, object]:
-        return {"company_id": company_id, "summary": "placeholder AI analysis summary"}
-
-    async def calculate_risk(
-        self, company_id: str, context: dict[str, object] | None = None
-    ) -> dict[str, object]:
-        return {"company_id": company_id, "risk_score": 0.42}
-
-    async def due_diligence(
-        self, company_id: str, context: dict[str, object] | None = None
-    ) -> dict[str, object]:
-        return {"company_id": company_id, "status": "approved"}
-
-    async def explainability(
-        self, company_id: str, context: dict[str, object] | None = None
-    ) -> dict[str, object]:
-        return {"company_id": company_id, "explanation": "placeholder explanation"}
+        return {
+            "economy_status": "stable",
+        }
 
 
 def get_financial_data_service() -> FinancialDataService:
@@ -68,7 +55,11 @@ def get_financial_data_service() -> FinancialDataService:
 
 
 def get_ai_analysis_service() -> AIAnalysisService:
-    return PlaceholderAIAnalysisService()
+    """
+    Returns the actual AI analysis implementation
+    connected to the LangGraph workflow.
+    """
+    return AIAnalysisServiceImpl()
 
 
 def get_auth_service() -> AuthService:
@@ -79,16 +70,20 @@ def get_health_service() -> HealthService:
     return HealthService()
 
 
-
 def get_analysis_service(
     financial_data_service: Annotated[
-        FinancialDataService, Depends(get_financial_data_service)
+        FinancialDataService,
+        Depends(get_financial_data_service),
     ],
     ai_analysis_service: Annotated[
-        AIAnalysisService, Depends(get_ai_analysis_service)
+        AIAnalysisService,
+        Depends(get_ai_analysis_service),
     ],
 ) -> AnalysisService:
-    return AnalysisService(financial_data_service, ai_analysis_service)
+    return AnalysisService(
+        financial_data_service,
+        ai_analysis_service,
+    )
 
 
 async def get_current_user(
@@ -99,9 +94,11 @@ async def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing authorization credentials",
         )
+
     try:
         user = decode_token(credentials.credentials)
         return user
+
     except AuthenticationError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -115,11 +112,17 @@ class RequireRole:
         self.allowed_roles = set(allowed_roles)
 
     def __call__(
-        self, current_user: UserContext = Depends(get_current_user)
+        self,
+        current_user: UserContext = Depends(get_current_user),
     ) -> UserContext:
         if current_user.role not in self.allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Forbidden: role '{current_user.role}' lacks sufficient privileges. Required: {list(self.allowed_roles)}",
+                detail=(
+                    f"Forbidden: role '{current_user.role}' "
+                    f"lacks sufficient privileges. "
+                    f"Required: {list(self.allowed_roles)}"
+                ),
             )
+
         return current_user
