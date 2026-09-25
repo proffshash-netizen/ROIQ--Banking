@@ -10,7 +10,7 @@ from ....services.analysis_service import AnalysisService
 # Analysis actions are reserved for Admin and Analyst roles
 router = APIRouter(
     tags=["Analysis"],
-    dependencies=[Depends(RequireRole(["Admin", "Analyst"]))],
+    dependencies=[Depends(RequireRole(["Admin", "Analyst", "Corporate Credit Officer"]))],
 )
 
 

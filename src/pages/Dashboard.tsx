@@ -1,12 +1,16 @@
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import {
-  ShieldAlert, FileText, Activity, Building2, LineChart, TrendingUp,
-  TrendingDown, AlertTriangle, CheckCircle2, Clock, Zap, Globe,
+  ShieldAlert, FileText, Activity, Building2, LineChart,
+  AlertTriangle, CheckCircle2, Clock, Zap,
   BarChart3, Cpu, ArrowUpRight, ArrowDownRight, RefreshCw, Eye,
   ChevronRight, CircleDot, Briefcase
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useCompaniesStore } from "@/stores/companiesStore"
+import { useDashboardStore } from "@/stores/dashboardStore"
+import { fetchDashboardKPIs } from "@/services/dashboard.service"
+import { settingsService } from "@/services/settings.service"
 
 /* ─── Static demo data (replaces backend until connected) ─── */
 
@@ -24,15 +28,6 @@ const riskAlerts = [
   { id: 2, severity: "high",     company: "Zee Entertainment Ltd.",    issue: "Revenue declining YoY for 3 consecutive quarters",  score: 74 },
 ]
 
-const marketPulse = [
-  { label: "NSE Nifty 50",        value: "24,502.15",  change: "+0.74%",  up: true  },
-  { label: "BSE Sensex",          value: "80,716.55",  change: "+0.69%",  up: true  },
-  { label: "USD / INR",           value: "83.92",      change: "-0.12%",  up: false },
-  { label: "10-Yr G-Sec Yield",   value: "6.98%",      change: "+0.03%",  up: true  },
-  { label: "WTI Crude ($/bbl)",   value: "77.44",      change: "-1.20%",  up: false },
-  { label: "Gold ($/oz)",         value: "2,385.60",   change: "+0.55%",  up: true  },
-]
-
 const aiQueue = [
   { company: "Tata Steel Ltd.",          module: "Credit Risk",        progress: 72, eta: "~3 min"  },
   { company: "ONGC Ltd.",                module: "Financial Analytics", progress: 41, eta: "~8 min"  },
@@ -46,19 +41,32 @@ const upcomingTasks = [
   { date: "Tomorrow, 14:00",task: "Executive briefing – ROIQ AI findings",     priority: "low"    },
 ]
 
-const systemStatus = [
-  { name: "AI Inference Engine",  ok: true },
-  { name: "Data Pipeline",        ok: true },
-  { name: "Report Generator",     ok: true },
-  { name: "Backend API",          ok: false },
-]
-
 const priorityColor = { high: "text-rose-400 bg-rose-400/10", medium: "text-amber-400 bg-amber-400/10", low: "text-emerald-400 bg-emerald-400/10" }
 const severityColor = { critical: "border-rose-500/50 bg-rose-500/5", high: "border-amber-500/50 bg-amber-500/5" }
 
 export function Dashboard() {
   const navigate = useNavigate()
   const { companies } = useCompaniesStore()
+  const updateKPIs = useDashboardStore((state) => state.updateKPIs)
+  const [isBackendOnline, setIsBackendOnline] = useState(false)
+
+  useEffect(() => {
+    // Probe backend status and load KPIs
+    settingsService.getSystemStatus().then((status) => {
+      setIsBackendOnline(status.backend === "Running")
+    })
+
+    fetchDashboardKPIs().then((kpis) => {
+      updateKPIs(kpis)
+    })
+  }, [updateKPIs])
+
+  const systemStatus = [
+    { name: "AI Inference Engine",  ok: true },
+    { name: "Data Pipeline",        ok: true },
+    { name: "Report Generator",     ok: true },
+    { name: "Backend API",          ok: isBackendOnline },
+  ]
 
   // Dynamic precise calculations based on reference companies module dataset
   // KPI 1: total companies in store

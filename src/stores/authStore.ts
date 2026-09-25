@@ -17,10 +17,26 @@ interface AuthState {
   logout: () => void
 }
 
+const getInitialState = () => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+  const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null
+  if (token && userStr) {
+    try {
+      const user = JSON.parse(userStr)
+      return { user, isAuthenticated: true, isLoading: false }
+    } catch {
+      // fallback
+    }
+  }
+  return { user: null, isAuthenticated: false, isLoading: false }
+}
+
+const initial = getInitialState()
+
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  isAuthenticated: false,
-  isLoading: true, // Initially true while checking local storage
+  user: initial.user,
+  isAuthenticated: initial.isAuthenticated,
+  isLoading: initial.isLoading,
   login: (user, token) => {
     localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(user))

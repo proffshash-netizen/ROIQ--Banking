@@ -13,7 +13,7 @@ from ....schemas.dashboard import (
 
 router = APIRouter(
     tags=["Dashboard"],
-    dependencies=[Depends(RequireRole(["Admin", "Analyst", "Viewer"]))],
+    dependencies=[Depends(RequireRole(["Admin", "Analyst", "Viewer", "Corporate Credit Officer"]))],
 )
 
 
@@ -51,3 +51,19 @@ async def dashboard_overview() -> dict:
         ],
     )
     return build_success_response(payload.model_dump(by_alias=True))
+ 
+ 
+@router.get("/kpis", response_model=dict, summary="Get dashboard KPIs")
+async def dashboard_kpis() -> dict:
+    return build_success_response({
+        "companiesEvaluated": 16,
+        "totalLoanValue": 4500000000.0,
+        "highRiskFlags": 2,
+        "reportsGenerated": 14,
+        "datasetsUploaded": 1,
+        "loanApprovals": 12,
+        "loanRejections": 3,
+        "executiveReports": 14,
+        "analysisCompleted": 16,
+        "backendStatus": "operational",
+    })

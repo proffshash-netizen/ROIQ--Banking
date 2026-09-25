@@ -30,7 +30,6 @@ export const fetchFinancialAnalyticsData = async (): Promise<FinancialAnalyticsR
 
   // Adapt credit rating and risk
   const score = activeCompany.creditScore;
-  const rating = score >= 85 ? "A+" : score >= 75 ? "A" : score >= 65 ? "BBB+" : score >= 50 ? "BB" : "B-";
   const riskRating = activeCompany.riskLevel.charAt(0).toUpperCase() + activeCompany.riskLevel.slice(1);
 
   // Scale bond portfolio government/corporate allocation according to risk

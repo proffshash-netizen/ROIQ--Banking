@@ -1,4 +1,4 @@
-import { Bell, Search, User, LayoutDashboard, Building2, Upload, LineChart, TrendingUp, ShieldAlert, Briefcase, FileText, Sparkles, Settings, Building } from "lucide-react"
+import { Bell, User, LayoutDashboard, Building2, Upload, LineChart, TrendingUp, ShieldAlert, Briefcase, FileText, Sparkles, Settings, Building } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { NavLink } from "react-router-dom"
 import { cn } from "@/lib/utils"

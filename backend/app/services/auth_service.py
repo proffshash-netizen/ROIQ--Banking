@@ -17,13 +17,32 @@ class AuthService:
             "admin": "Admin",
             "analyst": "Analyst",
             "viewer": "Viewer",
+            "cco@roiq.ai": "Corporate Credit Officer",
         }
-        if username not in mock_users or password != "password":
+        
+        valid = False
+        role = "Corporate Credit Officer"
+        if username in mock_users:
+            if password in ("password", "password123"):
+                valid = True
+                role = mock_users[username]
+        elif password in ("password", "password123") or len(password) >= 6:
+            # Allow custom demo logins
+            valid = True
+            role = "Corporate Credit Officer"
+
+        if not valid:
             raise AuthenticationError("Invalid username or password")
 
-        role = mock_users[username]
         access_token = create_access_token(username=username, role=role)
-        return TokenResponse(access_token=access_token, role=role)
+        name = "Thomas Shelby" if username == "cco@roiq.ai" else username.split("@")[0].capitalize()
+        user_info = {
+            "id": f"usr_{abs(hash(username)) % 10000}",
+            "name": name,
+            "email": username if "@" in username else f"{username}@roiq.ai",
+            "role": role,
+        }
+        return TokenResponse(access_token=access_token, role=role, user=user_info)
 
     def get_current_user(self, token: str) -> UserContext:
         return decode_token(token)

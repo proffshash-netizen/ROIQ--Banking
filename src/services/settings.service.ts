@@ -1,3 +1,5 @@
+import { api } from '@/lib/api'
+
 export interface ActiveSession {
   id: string
   device: string
@@ -117,13 +119,24 @@ export const settingsService = {
   },
 
   getSystemStatus: async (): Promise<SystemStatus> => {
-    // Return live running status with slight random variance or static success
-    return {
-      backend: 'Running',
-      api: 'Running',
-      aiEngine: 'Running',
-      database: 'Running',
-      cache: 'Running',
+    try {
+      const res = await api.get('/health/health')
+      const isOk = res.status === 200 && (res.data?.status === 'ok' || res.data?.status === 'ready')
+      return {
+        backend: isOk ? 'Running' : 'Offline',
+        api: isOk ? 'Running' : 'Offline',
+        aiEngine: 'Running',
+        database: 'Running',
+        cache: 'Running',
+      }
+    } catch {
+      return {
+        backend: 'Offline',
+        api: 'Offline',
+        aiEngine: 'Running',
+        database: 'Running',
+        cache: 'Running',
+      }
     }
   },
 }

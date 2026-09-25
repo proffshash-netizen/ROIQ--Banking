@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ShieldAlert, Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuthStore } from "@/stores/authStore"
+import { api } from "@/lib/api"
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -35,19 +36,44 @@ export function Login() {
     setIsLoading(true)
     setError(null)
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    try {
+      const response = await api.post('/auth/login', {
+        username: data.email,
+        password: data.password,
+      })
 
-    if (data.email === "cco@roiq.ai") {
-      login({
-        id: "usr_123",
-        name: "Thomas Shelby",
-        email: "cco@roiq.ai",
-        role: "Corporate Credit Officer"
-      }, "mock_jwt_token_12345")
-      navigate("/")
-    } else {
-      setError("Invalid credentials. Please use cco@roiq.ai for the demo.")
+      if (response.data && response.data.success) {
+        const authData = response.data.data
+        const token = authData.access_token
+        const role = authData.role
+        const user = authData.user || {
+          id: "usr_123",
+          name: data.email === "cco@roiq.ai" ? "Thomas Shelby" : data.email.split("@")[0].toUpperCase(),
+          email: data.email,
+          role: (role as any) || "Corporate Credit Officer",
+        }
+        login(user, token)
+        navigate("/")
+        return
+      } else {
+        const msg = response.data?.error?.message || "Invalid credentials."
+        setError(msg)
+      }
+    } catch (err: any) {
+      // Local fallback for offline demo support
+      if (data.email === "cco@roiq.ai" && (data.password === "password123" || data.password === "password")) {
+        login({
+          id: "usr_123",
+          name: "Thomas Shelby",
+          email: "cco@roiq.ai",
+          role: "Corporate Credit Officer"
+        }, "mock_jwt_token_12345")
+        navigate("/")
+        return
+      }
+      const errMsg = err.response?.data?.error?.message || err.message || "Failed to authenticate with backend."
+      setError(errMsg)
+    } finally {
       setIsLoading(false)
     }
   }

@@ -1,5 +1,4 @@
-// Executive Report Module – Enterprise Mock Data Aggregation
-import type { ExecutiveReportVM } from "../types";
+import type { ExecutiveReportVM, DecisionOutcome, RiskLevel } from "../types";
 import { useCompaniesStore } from "@/stores/companiesStore";
 
 export const getExecutiveReportMockData = (): ExecutiveReportVM => {
@@ -16,11 +15,11 @@ export const getExecutiveReportMockData = (): ExecutiveReportVM => {
     critical: "CCC (High Risk)",
   };
 
-  const decisionMap: Record<string, string> = {
+  const decisionMap: Record<string, DecisionOutcome> = {
     low: "APPROVE",
     medium: "APPROVE WITH CONDITIONS",
-    high: "REJECT (HIGH RISK)",
-    critical: "REJECT (CRITICAL RISK)",
+    high: "REJECT",
+    critical: "REJECT",
   };
 
   return {
@@ -84,7 +83,7 @@ export const getExecutiveReportMockData = (): ExecutiveReportVM => {
     },
     riskAggregation: {
       overallRiskScore: 100 - company.creditScore,
-      overallRiskLevel: company.riskLevel.charAt(0).toUpperCase() + company.riskLevel.slice(1),
+      overallRiskLevel: (company.riskLevel.charAt(0).toUpperCase() + company.riskLevel.slice(1)) as RiskLevel,
       confidenceScore: 89.4,
       recommendedDecision: decisionMap[company.riskLevel],
       triggeredRule: `Risk Score dictates ${decisionMap[company.riskLevel]}`,

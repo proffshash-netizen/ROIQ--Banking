@@ -39,7 +39,6 @@ export const getCreditRiskMockData = (): CreditRiskInput => {
   const totalDefaults = hasDefault ? 1 : 0;
 
   // Generate realistic rating history
-  const today = new Date();
   const ratingHistoryMap: Record<string, string> = {
     "AA-": "A+", "A+": "A-", "A-": "BBB+", "BBB+": "BBB", "BB": "BB-", "B-": "CCC+"
   };

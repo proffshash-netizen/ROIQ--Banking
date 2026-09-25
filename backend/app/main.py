@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from .api.v1.routers import analysis, auth, dashboard, external_data, health, stream, websocket
+from .api.v1.routers import analysis, auth, dashboard, external_data, health, stream, upload, websocket
 from .config.settings import settings
 from .core.exceptions import PlatformError
 from .core.responses import build_error_response
@@ -40,6 +40,7 @@ def create_app() -> FastAPI:
     app.include_router(analysis.router, prefix="/api/v1/analysis")
     app.include_router(dashboard.router, prefix="/api/v1/dashboard")
     app.include_router(external_data.router, prefix="/api/v1/external-data")
+    app.include_router(upload.router, prefix="/api/v1/upload")
     app.include_router(health.router, prefix="/api/v1/health")
     app.include_router(health.router, prefix="")  # Support root /health, /ready, /live
     app.include_router(websocket.router, prefix="/api/v1/ws")

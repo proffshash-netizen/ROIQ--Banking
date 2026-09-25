@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import {
-  Building2, Search, ShieldAlert, TrendingUp, TrendingDown, BarChart3,
-  Briefcase, RefreshCw, CheckCircle2, AlertTriangle, Clock,
+  Building2, Search, BarChart3,
+  RefreshCw, CheckCircle2, AlertTriangle, Clock,
   Globe, Cpu, ChevronDown, Filter, ArrowUpRight, CircleDot
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"

@@ -6,4 +6,5 @@ pydantic[dotenv]
 pyjwt
 sse-starlette
 httpx
+langgraph
 pytest
