@@ -7,4 +7,10 @@ pyjwt
 sse-starlette
 httpx
 langgraph
+langgraph-checkpoint-postgres
+langgraph-checkpoint-sqlite
+sqlalchemy>=2.0
+alembic
+asyncpg
+psycopg[binary]
 pytest

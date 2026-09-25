@@ -17,6 +17,13 @@ class Settings:
     jwt_access_token_expire_minutes: int = int(
         os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "480")
     )
+    database_url: str | None = os.getenv("DATABASE_URL")
+    groq_api_key: str | None = os.getenv("GROQ_API_KEY")
+    groq_model: str = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    fred_api_key: str | None = os.getenv("FRED_API_KEY")
+    fmp_api_key: str | None = os.getenv("FMP_API_KEY")
+    finnhub_api_key: str | None = os.getenv("FINNHUB_API_KEY")
+    alpha_vantage_api_key: str | None = os.getenv("ALPHA_VANTAGE_API_KEY")
 
 
 settings = Settings()

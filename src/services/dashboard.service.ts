@@ -14,7 +14,7 @@ export async function fetchDashboardKPIs(): Promise<Partial<DashboardState>> {
     if (res.data?.success && res.data?.data) {
       return res.data.data;
     }
-  } catch (error) {
+  } catch {
     // Return fallback if backend is momentarily unreachable
   }
   return {
@@ -35,7 +35,7 @@ export async function fetchDashboardOverview(): Promise<any> {
   try {
     const res = await api.get('/dashboard/overview');
     return res.data;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

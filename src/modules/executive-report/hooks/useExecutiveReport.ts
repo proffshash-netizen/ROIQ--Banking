@@ -14,14 +14,14 @@ export function useExecutiveReport() {
     setLoading(true);
     setError(null);
     try {
-      const res = await executiveReportService.getExecutiveReport();
+      const res = await executiveReportService.getExecutiveReport(selectedCompanyId);
       setData(res);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load executive report data.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedCompanyId]);
 
 
   useEffect(() => {

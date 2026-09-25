@@ -27,9 +27,11 @@ class AIAnalysisServiceImpl(AIAnalysisService):
             customer_data = context.get("company", {})
 
         # Run the LangGraph workflow
-        result = loan_ai_graph.invoke({
-            "customer_data": customer_data
-        })
+        thread_id = str(customer_data.get("company_id") or company_id or "default_thread")
+        result = loan_ai_graph.invoke(
+            {"customer_data": customer_data, "company_id": company_id},
+            config={"configurable": {"thread_id": thread_id}}
+        )
 
         return {
             "risk_score": result.get("decision_score", 0.0),

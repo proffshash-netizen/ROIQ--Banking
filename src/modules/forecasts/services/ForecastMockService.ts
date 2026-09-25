@@ -21,11 +21,21 @@ const sectorMacro: Record<string, {
 
 const defaultMacro = { gdpGrowth: 6.8, inflation: 4.8, interestRate: 6.50, treasuryRate: 7.05, currency: 85.2, industryGrowth: 8.5, sentiment: "Bullish", competition: "High" };
 
-export const fetchForecastData = async (): Promise<ForecastResponse> => {
-  await new Promise((res) => setTimeout(res, 300));
+import { api } from "@/lib/api";
 
+export const fetchForecastData = async (companyId?: string | number): Promise<ForecastResponse> => {
   const store = useCompaniesStore.getState();
   const active = store.companies.find(c => c.id === store.selectedCompanyId) || store.companies[0];
+  const targetId = companyId ?? active?.id ?? 1;
+
+  try {
+    const res = await api.get(`/forecasts/${targetId}`);
+    if (res.data?.success && res.data?.data) {
+      return res.data.data as ForecastResponse;
+    }
+  } catch {
+    // Graceful offline demo fallback
+  }
 
   const score = active.creditScore;
   const macro = sectorMacro[active.sector] ?? defaultMacro;

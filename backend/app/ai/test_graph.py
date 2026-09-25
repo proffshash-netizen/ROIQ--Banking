@@ -1,4 +1,7 @@
-from app.ai.graph import loan_ai_graph
+try:
+    from .graph import loan_ai_graph
+except (ImportError, ValueError):
+    from app.ai.graph import loan_ai_graph
 
 
 mock_data = {

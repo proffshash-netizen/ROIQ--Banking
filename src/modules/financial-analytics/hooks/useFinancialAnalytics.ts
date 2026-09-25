@@ -8,11 +8,10 @@ export const useFinancialAnalytics = () => {
   const selectedCompanyId = useCompaniesStore((state) => state.selectedCompanyId);
 
   useEffect(() => {
-    refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCompanyId]);
+    refresh(selectedCompanyId);
+  }, [selectedCompanyId, refresh]);
 
-  const retry = () => refresh();
+  const retry = () => refresh(selectedCompanyId);
 
   return { treasury, liquidity, loading, error, retry, reset };
 };

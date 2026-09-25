@@ -15,6 +15,16 @@ def get_external_data_pipeline_service() -> ExternalDataPipelineService:
     return ExternalDataPipelineService(provider)
 
 
+@router.get(
+    "/providers",
+    response_model=dict,
+    summary="Get configuration and health status of all external financial providers",
+)
+async def get_providers_status() -> dict:
+    service = HttpExternalProviderService()
+    return build_success_response(service.get_providers_status())
+
+
 @router.post(
     "/normalize",
     response_model=dict,
@@ -29,3 +39,4 @@ async def normalize_external_data(
 ) -> dict:
     response = await pipeline_service.build_normalized_payload(payload)
     return build_success_response(response.model_dump())
+

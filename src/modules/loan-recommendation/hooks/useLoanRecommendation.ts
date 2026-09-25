@@ -16,7 +16,7 @@ export function useLoanRecommendation() {
     setLoading(true);
     setError(null);
     try {
-      const res = await loanRecommendationService.getLoanRecommendation();
+      const res = await loanRecommendationService.getLoanRecommendation(selectedCompanyId);
       setData(res);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load loan recommendation data.");

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { NavLink } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { useCompaniesStore } from "@/stores/companiesStore"
+import { useAuthStore } from "@/stores/authStore"
 
 const moduleLinks = [
   { name: "Dashboard",          href: "/",               icon: LayoutDashboard },
@@ -19,6 +20,10 @@ const moduleLinks = [
 
 export function Topbar() {
   const { companies, selectedCompanyId, selectCompany } = useCompaniesStore()
+  const { user } = useAuthStore()
+
+  const displayName = user?.name || "Thomas Shelby"
+  const displayRole = user?.role === "Corporate Credit Officer" ? "CCO" : user?.role || "CCO"
 
   return (
     <div className="sticky top-0 z-30 flex flex-col border-b border-border bg-background shadow-sm print:hidden">
@@ -56,7 +61,7 @@ export function Topbar() {
                 <User className="h-4 w-4 text-primary" />
               </div>
               <span className="hidden lg:flex lg:items-center text-sm font-semibold leading-6 text-foreground">
-                Thomas Shelby (CCO)
+                {displayName} ({displayRole})
               </span>
             </Button>
           </div>

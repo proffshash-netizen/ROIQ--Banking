@@ -194,14 +194,35 @@ export const staticCompanies: Company[] = [
   },
 ]
 
+import { api } from "@/lib/api"
+
 interface CompaniesState {
   companies: Company[]
   selectedCompanyId: number
+  loading: boolean
+  error: string | null
   selectCompany: (id: number) => void
+  fetchCompanies: () => Promise<void>
 }
 
 export const useCompaniesStore = create<CompaniesState>((set) => ({
   companies: staticCompanies,
   selectedCompanyId: 1, // default to Tata Steel
+  loading: false,
+  error: null,
   selectCompany: (id) => set({ selectedCompanyId: id }),
+  fetchCompanies: async () => {
+    set({ loading: true, error: null })
+    try {
+      const res = await api.get('/companies')
+      if (res.data?.success && Array.isArray(res.data.data) && res.data.data.length > 0) {
+        set({ companies: res.data.data, loading: false })
+      } else {
+        set({ loading: false })
+      }
+    } catch {
+      // Fallback gracefully to predefined portfolio if offline
+      set({ loading: false })
+    }
+  },
 }))

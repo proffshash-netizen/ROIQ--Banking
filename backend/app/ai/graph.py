@@ -14,7 +14,10 @@ try:
 except ImportError:
     HAS_LANGGRAPH = False
 
-from app.ai.state import LoanAIState, HumanApproval
+try:
+    from .state import LoanAIState, HumanApproval
+except ImportError:
+    from app.ai.state import LoanAIState, HumanApproval
 
 
 # ---------------------------------------------------------------------------
@@ -177,11 +180,30 @@ def evaluate_node(state: LoanAIState) -> LoanAIState:
         ],
     }
 
+    risk_factors = []
+    positive_factors = []
+    if debt_to_equity > 2.0:
+        risk_factors.append(f"Elevated financial leverage: Debt-to-Equity is {debt_to_equity:.2f}x (target <= 2.0x).")
+    else:
+        positive_factors.append(f"Conservative capital structure: Debt-to-Equity ratio of {debt_to_equity:.2f}x.")
+
+    if interest_coverage < 3.0:
+        risk_factors.append(f"Tight debt service capacity: Interest coverage is {interest_coverage:.2f}x (guideline >= 3.0x).")
+    else:
+        positive_factors.append(f"Strong interest coverage of {interest_coverage:.2f}x provides substantial debt-servicing cushion.")
+
+    if dscr < 1.4:
+        risk_factors.append(f"Constrained debt-service coverage: DSCR is {dscr:.2f}x (preferred >= 1.5x).")
+    else:
+        positive_factors.append(f"Healthy Debt Service Coverage Ratio (DSCR) of {dscr:.2f}x.")
+
+    human_review_required = risk_category in ("Medium", "High", "Critical")
+
     insights = list(state.get("ai_insights", []))
     insights.append(
         f"Underwriting model determined {risk_category} risk profile with decision score {score}/100."
     )
-    if risk_category in ("High", "Medium", "Critical"):
+    if human_review_required:
         insights.append(
             f"Policy Rule Trigger: {risk_category} risk requires mandatory Senior Credit Officer review."
         )
@@ -191,9 +213,12 @@ def evaluate_node(state: LoanAIState) -> LoanAIState:
         "credit_risk": credit_risk,
         "risk_category": risk_category,
         "decision_score": score,
+        "risk_factors": risk_factors,
+        "positive_factors": positive_factors,
+        "human_review_required": human_review_required,
         "chart_data": chart_data,
         "current_node": "evaluate",
-        "status": "RUNNING",
+        "status": "PAUSED_FOR_APPROVAL" if human_review_required and not state.get("human_approval") else "RUNNING",
         "ai_insights": insights,
     }
 
@@ -220,7 +245,8 @@ def human_review_node(state: LoanAIState) -> LoanAIState:
     Processes the Risk Officer's approval, overrides, and audit notes.
     Runs when resumed after the interrupt_before trigger.
     """
-    approval: HumanApproval = state.get("human_approval", {}) # type: ignore
+    raw_approval = state.get("human_approval")
+    approval: HumanApproval = raw_approval if raw_approval is not None else {}  # type: ignore
     current_cat = state.get("risk_category", "High")
     adjusted = approval.get("adjusted_category")
     final_cat = adjusted if adjusted else current_cat
@@ -265,7 +291,8 @@ def recommend_node(state: LoanAIState) -> LoanAIState:
     covenants, and loan facility parameters.
     """
     risk_cat = state.get("risk_category", "Medium")
-    approval = state.get("human_approval", {})
+    raw_approval = state.get("human_approval")
+    approval = raw_approval if raw_approval is not None else {}
     is_officer_approved = approval.get("approved", True)
     metrics = state.get("financial_metrics", {})
     req_loan = float(metrics.get("requested_loan", 100_000_000.0))
@@ -363,14 +390,54 @@ def recommend_node(state: LoanAIState) -> LoanAIState:
 
 
 # ---------------------------------------------------------------------------
-# Workflow Builder
+# Workflow Builder & Durable Persistent Checkpointer
 # ---------------------------------------------------------------------------
-shared_memory_saver = MemorySaver() if HAS_LANGGRAPH else None
+import os
+import sqlite3
+
+def get_durable_checkpointer() -> Any:
+    """
+    Returns a durable checkpointer (PostgresSaver if PostgreSQL is configured,
+    or SqliteSaver to persist checkpoints on disk across backend restarts).
+    Falls back to MemorySaver if file-based database is disabled.
+    """
+    db_url = os.getenv("DATABASE_URL", "")
+    
+    # 1. Try PostgreSQL if configured
+    if "postgres" in db_url:
+        try:
+            from langgraph.checkpoint.postgres import PostgresSaver
+            # Ensure conn string format for psycopg
+            pg_url = db_url.replace("postgresql+psycopg://", "postgresql://")
+            pg_saver = PostgresSaver.from_conn_string(pg_url)
+            pg_saver.setup()
+            return pg_saver
+        except Exception:
+            pass  # Fall back to durable SQLite file
+
+    # 2. Try durable SQLite file (ensures checkpoints survive restarts in dev/test)
+    try:
+        from langgraph.checkpoint.sqlite import SqliteSaver
+        db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "roiq_checkpoints.db"))
+        sqlite_conn = sqlite3.connect(db_path, check_same_thread=False)
+        sqlite_saver = SqliteSaver(sqlite_conn)
+        sqlite_saver.setup()
+        return sqlite_saver
+    except Exception:
+        pass
+
+    # 3. Fallback to MemorySaver
+    if HAS_LANGGRAPH:
+        return MemorySaver()
+    return None
+
+
+shared_memory_saver = get_durable_checkpointer()
 
 
 def create_loan_ai_graph(checkpointer: Optional[Any] = None):
     """
-    Creates and compiles the LangGraph workflow with MemorySaver checkpointer
+    Creates and compiles the LangGraph workflow with durable checkpointer
     and interrupt_before=['human_review'] for High/Medium risk profiles.
     """
     if not HAS_LANGGRAPH:
@@ -378,8 +445,9 @@ def create_loan_ai_graph(checkpointer: Optional[Any] = None):
             def __init__(self):
                 self._states: Dict[str, LoanAIState] = {}
 
-            def invoke(self, input_val: Optional[dict], config: dict) -> LoanAIState:
-                tid = config.get("configurable", {}).get("thread_id", "default")
+            def invoke(self, input_val: Optional[dict] = None, config: Optional[dict] = None) -> LoanAIState:
+                cfg = config or {}
+                tid = cfg.get("configurable", {}).get("thread_id", "default")
                 st = self._states.get(tid, {}) if input_val is None else {**input_val}
                 st = ingest_node(st)
                 st = evaluate_node(st)
@@ -393,8 +461,9 @@ def create_loan_ai_graph(checkpointer: Optional[Any] = None):
                 self._states[tid] = st
                 return st
 
-            def get_state(self, config: dict):
-                tid = config.get("configurable", {}).get("thread_id", "default")
+            def get_state(self, config: Optional[dict] = None):
+                cfg = config or {}
+                tid = cfg.get("configurable", {}).get("thread_id", "default")
                 st = self._states.get(tid, {})
                 class Snap:
                     def __init__(self, values, next_nodes):
@@ -403,10 +472,12 @@ def create_loan_ai_graph(checkpointer: Optional[Any] = None):
                 next_nodes = ("human_review",) if st.get("status") == "PAUSED_FOR_APPROVAL" else ()
                 return Snap(st, next_nodes)
 
-            def update_state(self, config: dict, values: dict, as_node: Optional[str] = None):
-                tid = config.get("configurable", {}).get("thread_id", "default")
+            def update_state(self, config: Optional[dict] = None, values: Optional[dict] = None, as_node: Optional[str] = None):
+                cfg = config or {}
+                tid = cfg.get("configurable", {}).get("thread_id", "default")
                 curr = self._states.get(tid, {})
-                curr.update(values)
+                if values:
+                    curr.update(values)
                 self._states[tid] = curr
 
         return FallbackGraph()
@@ -431,11 +502,43 @@ def create_loan_ai_graph(checkpointer: Optional[Any] = None):
     g.add_edge("human_review", "recommend")
     g.add_edge("recommend", END)
 
-    cp = checkpointer or shared_memory_saver or MemorySaver()
-    return g.compile(
+    cp = checkpointer if checkpointer is not None else shared_memory_saver
+    if cp is None and HAS_LANGGRAPH:
+        cp = MemorySaver()
+
+    compiled = g.compile(
         checkpointer=cp,
         interrupt_before=["human_review"],
     )
+
+    class SafeGraphWrapper:
+        def __init__(self, inner):
+            self._inner = inner
+
+        def _ensure_config(self, config: Optional[dict] = None) -> dict:
+            cfg = dict(config) if config else {}
+            cfg_configurable = dict(cfg.get("configurable", {}))
+            if "thread_id" not in cfg_configurable:
+                cfg_configurable["thread_id"] = "default"
+            cfg["configurable"] = cfg_configurable
+            return cfg
+
+        def invoke(self, input_val: Any, config: Optional[dict] = None, **kwargs) -> Any:
+            return self._inner.invoke(input_val, config=self._ensure_config(config), **kwargs)
+
+        def stream(self, input_val: Any, config: Optional[dict] = None, **kwargs) -> Any:
+            return self._inner.stream(input_val, config=self._ensure_config(config), **kwargs)
+
+        def get_state(self, config: Optional[dict] = None, **kwargs) -> Any:
+            return self._inner.get_state(self._ensure_config(config), **kwargs)
+
+        def update_state(self, config: Optional[dict] = None, values: Optional[dict] = None, **kwargs) -> Any:
+            return self._inner.update_state(self._ensure_config(config), values or {}, **kwargs)
+
+        def __getattr__(self, name: str) -> Any:
+            return getattr(self._inner, name)
+
+    return SafeGraphWrapper(compiled)
 
 
 loan_ai_checkpointer = shared_memory_saver

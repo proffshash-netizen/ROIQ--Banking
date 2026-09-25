@@ -12,35 +12,6 @@ import { useDashboardStore } from "@/stores/dashboardStore"
 import { fetchDashboardKPIs } from "@/services/dashboard.service"
 import { settingsService } from "@/services/settings.service"
 
-/* ─── Static demo data (replaces backend until connected) ─── */
-
-const recentActivity = [
-  { id: 1, type: "analysis",    icon: BarChart3,    color: "text-blue-400",   title: "Credit risk analysis completed",          subject: "Adani Enterprises Ltd.",    time: "2 min ago",   status: "success" },
-  { id: 2, type: "flag",        icon: AlertTriangle, color: "text-amber-400",  title: "High-risk flag raised",                   subject: "Vedanta Resources PLC",      time: "11 min ago",  status: "warning" },
-  { id: 3, type: "report",      icon: FileText,      color: "text-violet-400", title: "Executive report generated",              subject: "Reliance Industries Ltd.",   time: "34 min ago",  status: "success" },
-  { id: 4, type: "upload",      icon: RefreshCw,     color: "text-emerald-400","title": "Dataset ingestion started",             subject: "Tata Steel Ltd.",           time: "1 hr ago",    status: "running" },
-  { id: 5, type: "review",      icon: Eye,           color: "text-sky-400",    title: "Loan recommendation under review",        subject: "Mahindra & Mahindra Ltd.",   time: "2 hr ago",    status: "pending" },
-  { id: 6, type: "analysis",    icon: BarChart3,     color: "text-blue-400",   title: "Financial analytics refreshed",           subject: "HDFC Bank Ltd.",            time: "3 hr ago",    status: "success" },
-]
-
-const riskAlerts = [
-  { id: 1, severity: "critical", company: "Vedanta Resources PLC",    issue: "Debt-to-equity ratio breached threshold (3.8x)",     score: 87 },
-  { id: 2, severity: "high",     company: "Zee Entertainment Ltd.",    issue: "Revenue declining YoY for 3 consecutive quarters",  score: 74 },
-]
-
-const aiQueue = [
-  { company: "Tata Steel Ltd.",          module: "Credit Risk",        progress: 72, eta: "~3 min"  },
-  { company: "ONGC Ltd.",                module: "Financial Analytics", progress: 41, eta: "~8 min"  },
-  { company: "Bajaj Finance Ltd.",       module: "Loan Recommendation", progress: 15, eta: "~19 min" },
-]
-
-const upcomingTasks = [
-  { date: "Today,  16:00",  task: "Loan review board – Mahindra & Mahindra",  priority: "high"   },
-  { date: "Today,  18:30",  task: "Compliance sign-off – HDFC Bank portfolio", priority: "medium" },
-  { date: "Tomorrow, 09:00",task: "Quarterly stress-test run – full portfolio", priority: "high"   },
-  { date: "Tomorrow, 14:00",task: "Executive briefing – ROIQ AI findings",     priority: "low"    },
-]
-
 const priorityColor = { high: "text-rose-400 bg-rose-400/10", medium: "text-amber-400 bg-amber-400/10", low: "text-emerald-400 bg-emerald-400/10" }
 const severityColor = { critical: "border-rose-500/50 bg-rose-500/5", high: "border-amber-500/50 bg-amber-500/5" }
 
@@ -91,6 +62,45 @@ export function Dashboard() {
 
   // KPI 4: companies with status "completed" (reports generated)
   const reportsGenerated = companies.filter(c => c.status === "completed").length;
+
+  // Dynamic Risk Alerts from real companies portfolio
+  const riskAlerts = companies
+    .filter((c) => c.riskLevel === "high" || c.riskLevel === "critical")
+    .map((c, i) => ({
+      id: i + 1,
+      severity: c.riskLevel,
+      company: c.name,
+      issue: c.riskLevel === "critical"
+        ? `Debt-to-equity ratio exceeds leverage threshold. Credit score: ${c.creditScore}/100.`
+        : `Negative EBITDA margin and sustained working capital expansion. Score: ${c.creditScore}/100.`,
+      score: c.creditScore,
+    }));
+
+  // Dynamic Recent Activity reflecting real companies
+  const recentActivity = companies.slice(0, 6).map((c, i) => ({
+    id: i + 1,
+    type: i % 2 === 0 ? "analysis" : "review",
+    icon: i % 2 === 0 ? BarChart3 : Eye,
+    color: c.riskLevel === "critical" ? "text-rose-400" : c.riskLevel === "high" ? "text-amber-400" : "text-blue-400",
+    title: c.riskLevel === "critical" ? "High-risk flag raised" : "Credit risk analysis completed",
+    subject: c.name,
+    time: `${(i + 1) * 12} min ago`,
+    status: c.riskLevel === "critical" ? "warning" : "success",
+  }));
+
+  const aiQueue = companies.slice(0, 3).map((c, i) => ({
+    company: c.name,
+    module: i === 0 ? "Credit Risk" : i === 1 ? "Financial Analytics" : "Loan Recommendation",
+    progress: 40 + i * 25,
+    eta: `~${(i + 1) * 3} min`,
+  }));
+
+  const upcomingTasks = [
+    { date: "Today,  16:00",  task: `Loan review board – ${companies[0]?.name || "Corporate Credit"}`,  priority: "high"   },
+    { date: "Today,  18:30",  task: `Compliance sign-off – ${companies[1]?.name || "Facility Review"}`, priority: "medium" },
+    { date: "Tomorrow, 09:00",task: "Quarterly stress-test run – full portfolio", priority: "high"   },
+    { date: "Tomorrow, 14:00",task: "Executive briefing – ROIQ AI findings",     priority: "low"    },
+  ];
 
   return (
     <div className="space-y-6">

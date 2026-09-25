@@ -4,7 +4,14 @@ import { useCompaniesStore } from "@/stores/companiesStore";
 
 export const getCreditRiskMockData = (): CreditRiskInput => {
   const store = useCompaniesStore.getState();
-  const active = store.companies.find(c => c.id === store.selectedCompanyId) ?? store.companies[0];
+  const active = store.companies.find(c => c.id === store.selectedCompanyId) ?? store.companies[0] ?? {
+    id: 1,
+    name: "Apple Inc.",
+    creditScore: 88,
+    loanExposure: "$420M",
+    sector: "Technology",
+    riskLevel: "low",
+  };
   const score = active.creditScore;
 
   // Scale total outstanding debt by loan exposure

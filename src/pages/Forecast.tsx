@@ -32,7 +32,7 @@ export function Forecast() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetchForecastData();
+      const response = await fetchForecastData(selectedCompanyId);
       setData(response);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));

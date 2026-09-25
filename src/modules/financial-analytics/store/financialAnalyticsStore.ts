@@ -9,7 +9,7 @@ interface FinancialAnalyticsState {
   loading: boolean;
   error: string | null;
   lastUpdated: Date | null;
-  refresh: () => Promise<void>;
+  refresh: (companyId?: string | number) => Promise<void>;
   reset: () => void;
 }
 
@@ -19,10 +19,10 @@ export const useFinancialAnalyticsStore = create<FinancialAnalyticsState>((set) 
   loading: false,
   error: null,
   lastUpdated: null,
-  refresh: async () => {
+  refresh: async (companyId?: string | number) => {
     set({ loading: true, error: null });
     try {
-      const { treasury, liquidity } = await fetchFinancialAnalyticsData();
+      const { treasury, liquidity } = await fetchFinancialAnalyticsData(companyId);
       set({ treasury, liquidity, loading: false, lastUpdated: new Date() });
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);

@@ -17,17 +17,17 @@ class AuthService:
             "admin": "Admin",
             "analyst": "Analyst",
             "viewer": "Viewer",
+            "officer": "Corporate Credit Officer",
             "cco@roiq.ai": "Corporate Credit Officer",
         }
         
         valid = False
         role = "Corporate Credit Officer"
-        if username in mock_users:
-            if password in ("password", "password123"):
-                valid = True
-                role = mock_users[username]
-        elif password in ("password", "password123") or len(password) >= 6:
-            # Allow custom demo logins
+        if username in mock_users and password in ("password", "password123"):
+            valid = True
+            role = mock_users[username]
+        elif "@" in username and password in ("password", "password123"):
+            # Allow custom demo email logins with demo password
             valid = True
             role = "Corporate Credit Officer"
 

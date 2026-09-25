@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type Role = 'Corporate Credit Officer' | 'Risk Manager' | 'Administrator'
+export type Role = 'Corporate Credit Officer' | 'Risk Manager' | 'Administrator' | 'Admin' | 'Analyst' | 'Viewer'
 
 export interface User {
   id: string

@@ -4,17 +4,26 @@ import { liquidityMockData } from "../mock/liquidity.mock";
 import type { TreasuryInput, LiquidityInput } from "../types";
 import { useCompaniesStore } from "@/stores/companiesStore";
 
+import { api } from "@/lib/api";
+
 export interface FinancialAnalyticsResponse {
   treasury: TreasuryInput;
   liquidity: LiquidityInput;
 }
 
-export const fetchFinancialAnalyticsData = async (): Promise<FinancialAnalyticsResponse> => {
-  // Simulate network latency
-  await new Promise((res) => setTimeout(res, 300));
-
+export const fetchFinancialAnalyticsData = async (companyId?: string | number): Promise<FinancialAnalyticsResponse> => {
   const store = useCompaniesStore.getState();
   const activeCompany = store.companies.find(c => c.id === store.selectedCompanyId) || store.companies[0];
+  const targetId = companyId ?? activeCompany?.id ?? 1;
+
+  try {
+    const res = await api.get(`/financial-analytics/${targetId}`);
+    if (res.data?.success && res.data?.data) {
+      return res.data.data as FinancialAnalyticsResponse;
+    }
+  } catch {
+    // Fallback if backend offline
+  }
 
   // Parse loan exposure (e.g., "$420M" -> 420, "$1.2B" -> 1200)
   let exposureVal = 420; // default Tata Steel exposure in millions

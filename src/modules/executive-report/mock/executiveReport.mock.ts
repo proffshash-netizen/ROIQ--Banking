@@ -3,7 +3,14 @@ import { useCompaniesStore } from "@/stores/companiesStore";
 
 export const getExecutiveReportMockData = (): ExecutiveReportVM => {
   const state = useCompaniesStore.getState();
-  const company = state.companies.find((c) => c.id === state.selectedCompanyId) || state.companies[0];
+  const company = state.companies.find((c) => c.id === state.selectedCompanyId) || state.companies[0] || {
+    id: 1,
+    name: "Apple Inc.",
+    creditScore: 88,
+    loanExposure: "$420M",
+    sector: "Technology",
+    riskLevel: "low",
+  };
 
   const reportId = `RPT-2026-${String(company.id).padStart(4, '0')}-${company.name.slice(0, 3).toUpperCase()}`;
   const loanAmount = parseFloat(company.loanExposure.replace(/[^0-9.]/g, "")) * (company.loanExposure.includes("B") ? 1_000_000_000 : 1_000_000);

@@ -24,6 +24,9 @@ class LoanAIState(TypedDict, total=False):
     credit_risk: dict[str, Any]
     risk_category: str  # "Low" | "Medium" | "High" | "Critical"
     decision_score: float
+    risk_factors: list[str]
+    positive_factors: list[str]
+    human_review_required: bool
     human_approval: HumanApproval
     loan_recommendation: dict[str, Any]
     recommendations: list[str]
@@ -32,3 +35,4 @@ class LoanAIState(TypedDict, total=False):
     current_node: str  # "ingest" | "evaluate" | "human_review" | "recommend"
     status: str  # "RUNNING" | "PAUSED_FOR_APPROVAL" | "COMPLETED" | "ERROR"
     error: Optional[str]
+    is_llm_generated: bool

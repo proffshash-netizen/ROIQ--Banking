@@ -5,7 +5,14 @@ import { useCompaniesStore } from "@/stores/companiesStore";
 
 export const getLoanRecommendationMockData = (): LoanRecommendationInput => {
   const store = useCompaniesStore.getState();
-  const active = store.companies.find(c => c.id === store.selectedCompanyId) ?? store.companies[0];
+  const active = store.companies.find(c => c.id === store.selectedCompanyId) ?? store.companies[0] ?? {
+    id: 1,
+    name: "Apple Inc.",
+    creditScore: 88,
+    loanExposure: "$420M",
+    sector: "Technology",
+    riskLevel: "low",
+  };
   const score = active.creditScore;
 
   // Map credit score → risk level
