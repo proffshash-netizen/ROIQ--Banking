@@ -11,72 +11,89 @@ interface Props {
 }
 
 export const YieldCurveChartWidget: React.FC<Props> = ({ data }) => {
+  // Guard: fallback if tenors is empty
+  const tenors = data.tenors.length > 0
+    ? data.tenors
+    : [
+        { label: "3M", years: 0.25, yield: 5.85 },
+        { label: "6M", years: 0.5,  yield: 6.02 },
+        { label: "1Y", years: 1,    yield: 6.25 },
+        { label: "2Y", years: 2,    yield: 6.48 },
+        { label: "5Y", years: 5,    yield: 6.82 },
+        { label: "10Y", years: 10,  yield: 7.05 },
+        { label: "30Y", years: 30,  yield: 7.35 },
+      ];
+
   const option = {
     tooltip: {
       trigger: "axis" as const,
-      backgroundColor: "hsl(272 38% 8%)",
-      borderColor: "hsl(272 30% 20%)",
-      textStyle: { color: "hsl(272 20% 92%)", fontSize: 11 },
+      backgroundColor: "#FFFFFF",
+      borderColor: "#D9E1EA",
+      borderWidth: 1,
+      textStyle: { color: "#172033", fontSize: 11 },
       formatter: (params: Array<{ name: string; value: number }>) => {
         const p = params[0];
-        return `<strong>${p.name}</strong><br/>Yield: ${p.value.toFixed(2)}%`;
+        return `<strong>${p.name}</strong><br/>Yield: ${Number(p.value).toFixed(2)}%`;
       },
     },
-    grid: { top: 20, right: 20, bottom: 30, left: 40, containLabel: false },
+    grid: { top: 16, right: 16, bottom: 30, left: 10, containLabel: true },
     xAxis: {
       type: "category" as const,
-      data: data.tenors.map((t) => t.label),
-      axisLine: { lineStyle: { color: "hsl(272 30% 20%)" } },
-      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10 },
+      data: tenors.map((t) => t.label),
+      boundaryGap: false,
+      axisLine: { lineStyle: { color: "#D9E1EA" } },
+      axisTick: { show: false },
+      axisLabel: { color: "#5F6F85", fontSize: 11 },
     },
     yAxis: {
       type: "value" as const,
-      min: (v: { min: number }) => Math.floor(v.min * 10 - 2) / 10,
+      min: (v: { min: number }) => Math.max(0, Math.floor((v.min - 0.5) * 10) / 10),
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: "hsl(272 30% 16%)", type: "dashed" as const } },
-      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10, formatter: "{value}%" },
+      axisTick: { show: false },
+      splitLine: { lineStyle: { color: "#EBF0F7", type: "dashed" as const } },
+      axisLabel: { color: "#5F6F85", fontSize: 11, formatter: "{value}%" },
     },
     series: [
       {
         type: "line",
-        data: data.tenors.map((t) => t.yield),
+        data: tenors.map((t) => t.yield),
         smooth: 0.4,
-        lineStyle: { width: 3, color: "hsl(272 85% 65%)" },
-        itemStyle: { color: "hsl(272 85% 65%)" },
-        areaStyle: {
-          color: {
-            type: "linear",
-            x: 0, y: 0, x2: 0, y2: 1,
-            colorStops: [
-              { offset: 0, color: "hsla(272 85% 65% / 0.28)" },
-              { offset: 1, color: "hsla(272 85% 65% / 0.02)" },
-            ],
-          },
-        },
-        symbolSize: 6,
+        lineStyle: { width: 2.5, color: "#1E4FA3" },
+        itemStyle: { color: "#1E4FA3" },
+        areaStyle: { color: "rgba(30, 79, 163, 0.08)" },
+        symbolSize: 5,
+        symbol: "circle",
       },
     ],
-    animation: true,
-    animationDuration: 1000,
+    animation: false,
   };
 
-  const shapeVariant = data.shape.toLowerCase().includes("inverted") ? "danger" : data.shape.toLowerCase().includes("flat") ? "warning" : "success";
+  const shapeVariant =
+    data.shape.toLowerCase().includes("inverted") ? "danger"
+    : data.shape.toLowerCase().includes("flat")     ? "warning"
+    : "success";
 
   return (
-    <Card className="col-span-1 md:col-span-2">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">Yield Curve</CardTitle>
-        <GitBranch className="h-4 w-4 text-purple-400" />
+    <Card className="col-span-1 md:col-span-1 border border-[#D9E1EA] bg-white">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 border-b border-[#D9E1EA]">
+        <CardTitle className="text-sm font-semibold text-[#172033]">Treasury yield curve structure</CardTitle>
+        <GitBranch className="h-4 w-4 text-[#1E4FA3]" />
       </CardHeader>
-      <CardContent>
-        <ReactEChartsCore key={`yield-${data.tenors[0]?.yield ?? 0}-${data.tenors.length}`} option={option} style={{ height: 220 }} notMerge />
-        <div className="flex items-center gap-3 mt-3">
+      <CardContent className="pt-4">
+        <ReactEChartsCore
+          key={`yield-${tenors[0]?.yield ?? 0}-${tenors.length}`}
+          option={option}
+          style={{ height: 220 }}
+          notMerge
+          opts={{ renderer: "canvas" }}
+        />
+        <div className="flex items-center gap-6 mt-3 pt-3 border-t border-[#EBF0F7]">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Shape</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#5F6F85] mb-1">Curve shape</p>
             <StatusBadge label={data.shape} variant={shapeVariant} />
           </div>
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Steepness</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#5F6F85] mb-1">Steepness (10Y–2Y)</p>
             <StatusBadge label={data.steepness} variant="info" />
           </div>
         </div>

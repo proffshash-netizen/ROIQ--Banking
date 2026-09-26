@@ -16,27 +16,28 @@ export const MacroIndustryWidget: React.FC<Props> = ({ data }) => {
   const macroOption = {
     tooltip: {
       trigger: "axis" as const,
-      backgroundColor: "hsl(272 38% 8%)",
-      borderColor: "hsl(272 30% 20%)",
-      textStyle: { color: "hsl(272 20% 92%)", fontSize: 11 },
+      backgroundColor: "#FFFFFF",
+      borderColor: "#E2E8F0",
+      borderWidth: 1,
+      textStyle: { color: "#172033", fontSize: 11 },
     },
     legend: {
       data: ["GDP Growth", "Inflation Rate", "Interest Rate", "Treasury Rate"],
       bottom: 0,
-      textStyle: { color: "hsl(272 20% 70%)", fontSize: 10 },
+      textStyle: { color: "#64748B", fontSize: 11 },
     },
-    grid: { top: 20, right: 16, bottom: 40, left: 40 },
+    grid: { top: 20, right: 16, bottom: 40, left: 35, containLabel: true },
     xAxis: {
       type: "category" as const,
       data: data.macroTrends.map((t) => t.year),
-      axisLine: { lineStyle: { color: "hsl(272 30% 20%)" } },
-      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10 },
+      axisLine: { lineStyle: { color: "#E2E8F0" } },
+      axisLabel: { color: "#64748B", fontSize: 11 },
     },
     yAxis: {
       type: "value" as const,
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: "hsl(272 30% 16%)", type: "dashed" as const } },
-      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10, formatter: "{value}%" },
+      splitLine: { lineStyle: { color: "#F1F5F9", type: "dashed" as const } },
+      axisLabel: { color: "#64748B", fontSize: 11, formatter: "{value}%" },
     },
     series: [
       {
@@ -44,30 +45,35 @@ export const MacroIndustryWidget: React.FC<Props> = ({ data }) => {
         type: "line",
         data: data.macroTrends.map((t) => t.gdp),
         smooth: true,
-        itemStyle: { color: "hsl(142 76% 45%)" },
+        lineStyle: { width: 2, color: "#16805B" },
+        itemStyle: { color: "#16805B" },
       },
       {
         name: "Inflation Rate",
         type: "line",
         data: data.macroTrends.map((t) => t.inflation),
         smooth: true,
-        itemStyle: { color: "hsl(352 82% 54%)" },
+        lineStyle: { width: 2, color: "#C53D3D" },
+        itemStyle: { color: "#C53D3D" },
       },
       {
         name: "Interest Rate",
         type: "line",
         data: data.macroTrends.map((t) => t.interest),
         smooth: true,
-        itemStyle: { color: "hsl(272 85% 65%)" },
+        lineStyle: { width: 2, color: "#2457D6" },
+        itemStyle: { color: "#2457D6" },
       },
       {
         name: "Treasury Rate",
         type: "line",
         data: data.macroTrends.map((t) => t.treasury),
         smooth: true,
-        itemStyle: { color: "hsl(285 85% 72%)" },
+        lineStyle: { width: 1.5, type: "dashed" as const, color: "#64748B" },
+        itemStyle: { color: "#64748B" },
       },
     ],
+    animation: false,
   };
 
   // 2. Industry Indicators Horizontal Bar Chart Option
@@ -76,111 +82,114 @@ export const MacroIndustryWidget: React.FC<Props> = ({ data }) => {
     tooltip: {
       trigger: "axis" as const,
       axisPointer: { type: "shadow" as const },
-      backgroundColor: "hsl(272 38% 8%)",
-      borderColor: "hsl(272 30% 20%)",
-      textStyle: { color: "hsl(272 20% 92%)", fontSize: 11 },
+      backgroundColor: "#FFFFFF",
+      borderColor: "#E2E8F0",
+      borderWidth: 1,
+      textStyle: { color: "#172033", fontSize: 11 },
     },
-    grid: { top: 10, right: 30, bottom: 20, left: 130 },
+    grid: { top: 10, right: 30, bottom: 20, left: 110, containLabel: true },
     xAxis: {
       type: "value" as const,
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: "hsl(272 30% 16%)", type: "dashed" as const } },
-      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 9, formatter: "{value}%" },
+      splitLine: { lineStyle: { color: "#F1F5F9", type: "dashed" as const } },
+      axisLabel: { color: "#64748B", fontSize: 10, formatter: "{value}%" },
     },
     yAxis: {
       type: "category" as const,
       data: sortedSegments.map((s) => s.segment),
-      axisLine: { lineStyle: { color: "hsl(272 30% 20%)" } },
-      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10 },
+      axisLine: { lineStyle: { color: "#E2E8F0" } },
+      axisLabel: { color: "#64748B", fontSize: 10 },
     },
     series: [
       {
         type: "bar",
         data: sortedSegments.map((s) => s.growthRate),
         itemStyle: {
-          color: "hsl(272 85% 65%)",
+          color: "#2457D6",
           borderRadius: [0, 4, 4, 0],
         },
         label: {
           show: true,
           position: "right",
-          color: "hsl(272 20% 70%)",
-          fontSize: 9,
+          color: "#64748B",
+          fontSize: 10,
           formatter: "{c}%",
         },
+        barWidth: "40%",
       },
     ],
+    animation: false,
   };
 
   return (
-    <Card className="col-span-1 lg:col-span-2">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">Macroeconomic & Industry Analysis</CardTitle>
-        <Globe className="h-4 w-4 text-purple-400" />
+    <Card className="col-span-1 lg:col-span-2 border border-[#E2E8F0] bg-white">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 border-b border-[#E2E8F0]">
+        <CardTitle className="text-sm font-semibold text-[#172033]">Macroeconomic & industry analysis</CardTitle>
+        <Globe className="h-4 w-4 text-[#2457D6]" />
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 pt-4">
         {/* Indicators */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
-            <span className="text-[10px] text-muted-foreground block uppercase font-medium">GDP Growth</span>
-            <span className="text-lg font-bold text-emerald-400">{formatPct(data.gdpGrowth)}</span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded p-3">
+            <span className="text-[10px] text-[#64748B] block uppercase font-semibold">GDP Growth</span>
+            <span className="text-lg font-bold text-[#16805B] mt-0.5 block">{formatPct(data.gdpGrowth)}</span>
           </div>
-          <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
-            <span className="text-[10px] text-muted-foreground block uppercase font-medium">Inflation</span>
-            <span className="text-lg font-bold text-red-400">{formatPct(data.inflationRate)}</span>
+          <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded p-3">
+            <span className="text-[10px] text-[#64748B] block uppercase font-semibold">Inflation</span>
+            <span className="text-lg font-bold text-[#C53D3D] mt-0.5 block">{formatPct(data.inflationRate)}</span>
           </div>
-          <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
-            <span className="text-[10px] text-muted-foreground block uppercase font-medium">Interest Rate</span>
-            <span className="text-lg font-bold text-purple-400">{formatPct(data.interestRate)}</span>
+          <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded p-3">
+            <span className="text-[10px] text-[#64748B] block uppercase font-semibold">Interest Rate</span>
+            <span className="text-lg font-bold text-[#2457D6] mt-0.5 block">{formatPct(data.interestRate)}</span>
           </div>
-          <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
-            <span className="text-[10px] text-muted-foreground block uppercase font-medium">Industry Growth</span>
-            <span className="text-lg font-bold text-purple-300">{formatPct(data.industryGrowth)}</span>
+          <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded p-3">
+            <span className="text-[10px] text-[#64748B] block uppercase font-semibold">Industry Growth</span>
+            <span className="text-lg font-bold text-[#172033] mt-0.5 block">{formatPct(data.industryGrowth)}</span>
           </div>
         </div>
 
         {/* Charts */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
-              Macroeconomic Trends (GDP vs Inflation vs Interest)
+            <span className="text-xs font-semibold text-[#172033] block">
+              Macroeconomic trends (GDP vs Inflation vs Policy)
             </span>
             <ReactEChartsCore key={`macro-${data.gdpGrowth}-${data.macroTrends.length}`} option={macroOption} style={{ height: 200 }} notMerge />
           </div>
           <div className="space-y-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
-              Industry Segment Growth Rates
+            <span className="text-xs font-semibold text-[#172033] block">
+              Industry segment growth rates
             </span>
             <ReactEChartsCore key={`industry-${data.industryGrowth}-${data.industrySegments.length}`} option={industryOption} style={{ height: 200 }} notMerge />
           </div>
         </div>
 
         {/* Country Risk & Market Sentiments */}
-        <div className="rounded-lg border border-border/50 bg-muted/20 p-4 space-y-3">
+        <div className="rounded border border-[#E2E8F0] bg-[#F8FAFC] p-4 space-y-3">
           <div className="flex flex-wrap gap-4 items-center justify-between">
-            <div className="flex gap-4">
+            <div className="flex gap-6">
               <div>
-                <span className="text-[9px] uppercase tracking-wider text-muted-foreground block">Country Risk Rating</span>
+                <span className="text-[10px] text-[#64748B] block font-semibold">Country risk rating</span>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="text-sm font-bold text-emerald-400">{data.countryRiskRating}</span>
+                  <span className="text-sm font-bold text-[#16805B]">{data.countryRiskRating}</span>
                   <StatusBadge label={data.countryRiskOutlook} variant={getRiskVariant(data.countryRiskRating)} />
                 </div>
               </div>
               <div>
-                <span className="text-[9px] uppercase tracking-wider text-muted-foreground block">Market Sentiment</span>
-                <span className="text-sm font-bold mt-0.5 block text-purple-400">{data.marketSentiment}</span>
+                <span className="text-[10px] text-[#64748B] block font-semibold">Market sentiment</span>
+                <span className="text-sm font-semibold mt-0.5 block text-[#172033]">{data.marketSentiment}</span>
               </div>
               <div>
-                <span className="text-[9px] uppercase tracking-wider text-muted-foreground block">Competition</span>
-                <span className="text-sm font-bold mt-0.5 block">{data.competitionLevel}</span>
+                <span className="text-[10px] text-[#64748B] block font-semibold">Competition</span>
+                <span className="text-sm font-semibold mt-0.5 block text-[#172033]">{data.competitionLevel}</span>
               </div>
             </div>
             <div className="text-right">
-              <span className="text-[9px] uppercase tracking-wider text-muted-foreground block">Country Risk Score</span>
-              <span className="text-lg font-bold">{data.countryRiskScore.toFixed(1)}/100</span>
+              <span className="text-[10px] text-[#64748B] block font-semibold">Risk score</span>
+              <span className="text-lg font-bold text-[#172033]">{data.countryRiskScore.toFixed(1)} / 100</span>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed italic">
+          <p className="text-xs text-[#64748B] leading-relaxed">
             {data.countryRiskDescription}
           </p>
         </div>
@@ -190,3 +199,4 @@ export const MacroIndustryWidget: React.FC<Props> = ({ data }) => {
     </Card>
   );
 };
+

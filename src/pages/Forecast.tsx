@@ -64,27 +64,28 @@ export function Forecast() {
   const summaryVM = transformForecastSummary(corporateVM, macroVM);
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto min-h-screen bg-background text-foreground transition-colors duration-200">
+    <div className="space-y-6 max-w-[1600px] mx-auto pb-16">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border/40 pb-5">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Active Entity</span>
-            <span className="text-xs font-bold text-primary border border-primary/30 bg-primary/10 rounded px-2 py-0.5">
-              {activeCompany.name} · {activeCompany.sector}
-            </span>
+          <div className="flex items-center gap-2 text-xs text-[#64748B] mb-1">
+            <span>Financial forecasting</span>
+            <span>·</span>
+            <span className="font-semibold text-[#172033]">{activeCompany.name}</span>
+            <span>·</span>
+            <span>{activeCompany.sector}</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Macroeconomic &amp; Financial Forecasting</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="text-[28px] font-bold tracking-tight text-[#172033] leading-tight">Macroeconomic &amp; Financial Forecasting</h1>
+          <p className="text-sm text-[#64748B] mt-0.5">
             Predictive modeling combining balance sheet parameters with industry and global economic segments.
           </p>
         </div>
         <button
           onClick={loadData}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-card-foreground shadow-sm hover:bg-accent transition"
+          className="inline-flex items-center gap-1.5 rounded border border-[#E2E8F0] bg-white px-3 py-2 text-xs font-medium text-[#172033] hover:bg-[#F8FAFC] transition shadow-xs"
         >
-          <RefreshCw className="h-3.5 w-3.5" />
-          Refresh Forecasts
+          <RefreshCw className="h-3.5 w-3.5 text-[#64748B]" />
+          Refresh forecasts
         </button>
       </div>
 
@@ -95,32 +96,39 @@ export function Forecast() {
       </div>
 
       {/* Forecast Radar & Summary Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 border-t border-border/20">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2 border-t border-[#E2E8F0]">
         <div className="lg:col-span-2 flex flex-col justify-center space-y-4">
-          <div className="space-y-2">
-            <h2 className="text-lg font-semibold tracking-tight flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-purple-400" />
-              Composite Modeling Outlook
+          <div className="space-y-1.5">
+            <h2 className="text-base font-semibold tracking-tight text-[#172033] flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-[#2457D6]" />
+              Composite modeling outlook &amp; assumptions
             </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              The forecast uses an ensemble regression algorithm running across active cash flows, revenue margins,
-              macro interest rate trends, and country-level volatility metrics. Calculations update dynamically to maintain stable covenant tracking.
+            <p className="text-xs text-[#64748B] leading-relaxed">
+              The forecast model synthesizes historical balance sheet trends with forward-looking industry cash flow regressions. Actual historic figures (solid line) are calibrated against projected scenarios (dashed line) to test covenant stress thresholds.
             </p>
           </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="rounded-lg border border-border bg-card p-4">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1">
-                Model Confidence
-              </span>
-              <span className="text-2xl font-bold text-purple-400">{summaryVM.forecastConfidence}%</span>
-              <p className="text-[10px] text-muted-foreground mt-1">Based on historical parameter covariance.</p>
+            <div className="rounded-lg border border-[#E2E8F0] bg-white p-4 space-y-1">
+              <span className="text-[11px] font-medium text-[#64748B] block">Model confidence</span>
+              <span className="text-2xl font-bold font-mono text-[#172033]">{summaryVM.forecastConfidence}%</span>
+              <p className="text-[11px] text-[#64748B]">Historical covariance &amp; reporting reliability index.</p>
             </div>
-            <div className="rounded-lg border border-border bg-card p-4">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1">
-                Projected Growth (2026)
-              </span>
-              <span className="text-2xl font-bold text-emerald-400">+14.8% YoY</span>
-              <p className="text-[10px] text-muted-foreground mt-1">Expected corporate top-line revenue expansion.</p>
+            <div className="rounded-lg border border-[#E2E8F0] bg-white p-4 space-y-1">
+              <span className="text-[11px] font-medium text-[#64748B] block">Projected growth (FY2026-27)</span>
+              <span className="text-2xl font-bold font-mono text-[#16805B]">+14.8% YoY</span>
+              <p className="text-[11px] text-[#64748B]">Top-line corporate revenue expansion trajectory.</p>
+            </div>
+          </div>
+
+          {/* Model Assumptions Panel */}
+          <div className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-4 space-y-2 text-xs">
+            <span className="font-semibold text-[#172033] text-xs block">Baseline model assumptions</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-[#64748B]">
+              <div>GDP Growth: <strong className="text-[#172033]">6.8%</strong></div>
+              <div>Inflation (CPI): <strong className="text-[#172033]">4.2%</strong></div>
+              <div>Repo Rate: <strong className="text-[#172033]">6.50%</strong></div>
+              <div>USD/INR Range: <strong className="text-[#172033]">83.2 - 84.5</strong></div>
             </div>
           </div>
         </div>
@@ -129,3 +137,4 @@ export function Forecast() {
     </div>
   );
 }
+

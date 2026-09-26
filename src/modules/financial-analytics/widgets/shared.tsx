@@ -4,11 +4,11 @@ import React from "react";
 type BadgeVariant = "success" | "warning" | "danger" | "info" | "neutral";
 
 const variantClasses: Record<BadgeVariant, string> = {
-  success: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-  warning: "bg-purple-500/15 text-purple-400 border-purple-500/30",
-  danger: "bg-red-500/15 text-red-400 border-red-500/30",
-  info: "bg-purple-500/15 text-purple-300 border-purple-500/30",
-  neutral: "bg-purple-950/40 text-purple-200/70 border-purple-500/20",
+  success: "bg-[#16805B]/10 text-[#16805B] border-[#16805B]/20",
+  warning: "bg-[#B7791F]/10 text-[#B7791F] border-[#B7791F]/20",
+  danger: "bg-[#C53D3D]/10 text-[#C53D3D] border-[#C53D3D]/20",
+  info: "bg-[#2457D6]/10 text-[#2457D6] border-[#2457D6]/20",
+  neutral: "bg-slate-100 text-slate-700 border-slate-200",
 };
 
 interface StatusBadgeProps {
@@ -18,53 +18,34 @@ interface StatusBadgeProps {
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ label, variant = "neutral" }) => (
   <span
-    className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors ${variantClasses[variant]}`}
+    className={`inline-flex items-center rounded border px-2 py-0.5 text-xs font-semibold ${variantClasses[variant]}`}
   >
     {label}
   </span>
 );
 
 export function getComplianceVariant(status: string): BadgeVariant {
-  switch (status) {
-    case "Compliant":
-      return "success";
-    case "Warning":
-      return "warning";
-    case "Non-Compliant":
-      return "danger";
-    default:
-      return "neutral";
-  }
+  const norm = String(status).toLowerCase();
+  if (norm.includes("compliant") && !norm.includes("non")) return "success";
+  if (norm.includes("warn")) return "warning";
+  if (norm.includes("non") || norm.includes("breach") || norm.includes("danger")) return "danger";
+  return "neutral";
 }
 
 export function getRiskVariant(level: string): BadgeVariant {
-  switch (level) {
-    case "Low":
-      return "success";
-    case "Moderate":
-    case "Medium":
-      return "warning";
-    case "High":
-    case "Critical":
-      return "danger";
-    default:
-      return "neutral";
-  }
+  const norm = String(level).toLowerCase();
+  if (norm.includes("low")) return "success";
+  if (norm.includes("med") || norm.includes("mod")) return "warning";
+  if (norm.includes("high") || norm.includes("crit")) return "danger";
+  return "neutral";
 }
 
 export function getHealthVariant(health: string): BadgeVariant {
-  switch (health) {
-    case "Strong":
-    case "Healthy":
-      return "success";
-    case "Adequate":
-      return "warning";
-    case "Weak":
-    case "Critical":
-      return "danger";
-    default:
-      return "neutral";
-  }
+  const norm = String(health).toLowerCase();
+  if (norm.includes("strong") || norm.includes("healthy")) return "success";
+  if (norm.includes("adequate")) return "warning";
+  if (norm.includes("weak") || norm.includes("crit")) return "danger";
+  return "neutral";
 }
 
 interface KPIProps {
@@ -75,9 +56,9 @@ interface KPIProps {
 
 export const KPI: React.FC<KPIProps> = ({ label, value, sub }) => (
   <div className="space-y-1">
-    <p className="text-xs text-muted-foreground">{label}</p>
-    <p className="text-xl font-bold tracking-tight">{value}</p>
-    {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
+    <p className="text-xs text-[#64748B]">{label}</p>
+    <p className="text-xl font-bold tracking-tight text-[#172033]">{value}</p>
+    {sub && <p className="text-xs text-[#64748B]">{sub}</p>}
   </div>
 );
 
@@ -87,9 +68,9 @@ interface MetricRowProps {
 }
 
 export const MetricRow: React.FC<MetricRowProps> = ({ label, value }) => (
-  <div className="flex items-center justify-between py-1.5 border-b border-border/50 last:border-0">
-    <span className="text-xs text-muted-foreground">{label}</span>
-    <span className="text-sm font-medium">{value}</span>
+  <div className="flex items-center justify-between py-1.5 border-b border-[#E2E8F0] last:border-0">
+    <span className="text-xs text-[#64748B]">{label}</span>
+    <span className="text-sm font-medium text-[#172033]">{value}</span>
   </div>
 );
 
@@ -98,12 +79,12 @@ interface AIInsightProps {
 }
 
 export const AIInsight: React.FC<AIInsightProps> = ({ text }) => (
-  <div className="mt-4 rounded-lg bg-purple-500/10 border border-purple-500/20 p-3">
+  <div className="mt-3 rounded border border-[#E2E8F0] bg-slate-50 p-3">
     <div className="flex items-center gap-1.5 mb-1.5">
-      <div className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse" />
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-purple-400">AI Insight</span>
+      <span className="h-1.5 w-1.5 rounded-full bg-[#2457D6]" />
+      <span className="text-[11px] font-semibold text-[#172033]">Analyst Interpretation</span>
     </div>
-    <p className="text-xs text-muted-foreground leading-relaxed">{text}</p>
+    <p className="text-xs text-[#64748B] leading-relaxed">{text}</p>
   </div>
 );
 
@@ -112,5 +93,6 @@ interface WidgetTimestampProps {
 }
 
 export const WidgetTimestamp: React.FC<WidgetTimestampProps> = ({ date }) => (
-  <p className="text-[10px] text-muted-foreground/60 mt-3">Last updated: {date}</p>
+  <p className="text-[10px] text-[#94A3B8] mt-3">Last updated: {date}</p>
 );
+

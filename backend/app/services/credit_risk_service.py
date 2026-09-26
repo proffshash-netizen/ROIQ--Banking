@@ -60,14 +60,19 @@ class CreditRiskService:
             ),
         )
 
+        f_context = self.company_service.get_financial_context(company_id)
         total_debt = round(exp_mil * 1_000_000 * 3.8)
-        rating = "AA-" if score >= 88 else "A+" if score >= 80 else "A-" if score >= 72 else "BBB+" if score >= 60 else "BB" if score >= 48 else "B-"
-        debt_to_eq = 0.38 if score >= 85 else 0.85 if score >= 72 else 1.42 if score >= 58 else 2.10 if score >= 45 else 3.20
-        interest_cov = 12.5 if score >= 85 else 7.8 if score >= 72 else 4.2 if score >= 58 else 2.1 if score >= 45 else 0.9
-        dscr = 2.85 if score >= 85 else 1.95 if score >= 72 else 1.30 if score >= 58 else 0.98 if score >= 45 else 0.65
+        rating = "AA-" if score >= 88 else "A+" if score >= 80 else "A-" if score >= 72 else "BBB" if score >= 58 else "BB-" if score >= 45 else "CCC"
+        debt_to_eq = float(f_context.get("debt_to_equity") or (0.38 if score >= 85 else 0.85 if score >= 72 else 1.42 if score >= 58 else 2.10 if score >= 45 else 3.20))
+        interest_cov = float(f_context.get("interest_coverage") or (12.5 if score >= 85 else 7.8 if score >= 72 else 4.2 if score >= 58 else 2.1 if score >= 45 else 0.9))
+        dscr = float(f_context.get("dscr") or (2.85 if score >= 85 else 1.95 if score >= 72 else 1.30 if score >= 58 else 0.98 if score >= 45 else 0.65))
+        debt_to_eb = float(f_context.get("debt_to_ebitda") or (1.8 if score >= 85 else 2.9 if score >= 72 else 4.2 if score >= 58 else 6.0 if score >= 45 else 8.5))
+        curr_ratio = float(f_context.get("current_ratio") or (2.4 if score >= 85 else 1.75 if score >= 72 else 1.25 if score >= 58 else 0.95 if score >= 45 else 0.72))
+        prob_def = round((0.015 if score >= 85 else 0.022 if score >= 75 else 0.045 if score >= 58 else 0.095 if score >= 45 else 0.185) * 100, 2)
 
         credit_risk = CreditRiskInput(
             credit_history={
+                "credit_score": score,
                 "years_of_credit": 22 if score >= 80 else 15 if score >= 65 else 10 if score >= 50 else 6,
                 "payment_history_pct": round(88.0 + score * 0.12, 1),
                 "credit_utilization_pct": round(max(10.0, 70.0 - score * 0.45), 1),
@@ -83,18 +88,20 @@ class CreditRiskService:
                 "unsecured_debt": round(total_debt * 0.28),
             },
             default_history={
-                "total_defaults": 1 if score < 60 else 0,
+                "total_defaults": 2 if score < 45 else 1 if score < 58 else 0,
                 "bankruptcies": 0,
                 "delinquencies_last_2_years": 2 if score < 50 else 0,
-                "most_recent_default_year": "2021" if score < 60 else "None",
+                "most_recent_default_year": "2021" if score < 58 else "None",
             },
             credit_rating=rating,
             debt_ratios={
                 "debt_to_equity": debt_to_eq,
                 "interest_coverage": interest_cov,
                 "dscr": dscr,
-                "debt_to_ebitda": 1.8 if score >= 85 else 2.9 if score >= 72 else 4.2 if score >= 58 else 6.0 if score >= 45 else 8.5,
-                "current_ratio": 2.4 if score >= 85 else 1.75 if score >= 72 else 1.25 if score >= 58 else 0.95 if score >= 45 else 0.72,
+                "debt_service_coverage": dscr,
+                "debt_to_ebitda": debt_to_eb,
+                "current_ratio": curr_ratio,
+                "probability_of_default": prob_def,
             },
         )
 

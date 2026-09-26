@@ -37,6 +37,13 @@ class CompanyItem(BaseModel):
     lastAnalysis: str
     ceo: str
     hq: str
+    ebitda: Optional[str] = None
+    debt: Optional[str] = None
+    cash: Optional[str] = None
+    profitability: Optional[str] = None
+    liquidity: Optional[str] = None
+    dscr: Optional[str] = None
+    raw_financials: Optional[dict[str, Any]] = None
 
     model_config = ConfigDict(populate_by_name=True)
 

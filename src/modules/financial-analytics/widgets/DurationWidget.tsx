@@ -3,23 +3,23 @@ import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { DurationVM } from "../types";
 import { StatusBadge, MetricRow, AIInsight, getRiskVariant } from "./shared";
-import { Timer } from "lucide-react";
+import { Clock } from "lucide-react";
 
 interface Props {
   data: DurationVM;
 }
 
 export const DurationWidget: React.FC<Props> = ({ data }) => (
-  <Card>
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium">Duration Analysis</CardTitle>
-      <Timer className="h-4 w-4 text-purple-400" />
+  <Card className="border border-[#E2E8F0] bg-white">
+    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 border-b border-[#E2E8F0]">
+      <CardTitle className="text-sm font-semibold text-[#172033]">Duration & interest rate risk</CardTitle>
+      <Clock className="h-4 w-4 text-[#2457D6]" />
     </CardHeader>
-    <CardContent>
+    <CardContent className="pt-4">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-xs text-muted-foreground">Portfolio Duration</p>
-          <p className="text-3xl font-bold tracking-tight">{data.portfolioDuration.toFixed(2)}<span className="text-sm font-normal text-muted-foreground ml-1">yrs</span></p>
+          <p className="text-xs text-[#64748B]">Portfolio duration</p>
+          <p className="text-2xl font-bold font-mono text-[#172033] mt-0.5">{data.portfolioDuration.toFixed(2)}<span className="text-sm font-normal text-[#64748B] ml-1">years</span></p>
         </div>
         <StatusBadge label={data.riskLevel} variant={getRiskVariant(data.riskLevel)} />
       </div>
@@ -31,3 +31,4 @@ export const DurationWidget: React.FC<Props> = ({ data }) => (
     </CardContent>
   </Card>
 );
+

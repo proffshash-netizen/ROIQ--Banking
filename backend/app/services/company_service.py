@@ -351,6 +351,46 @@ class CompanyService:
                 self._companies[c["symbol"].lower()] = c
 
     def get_all_companies(self) -> list[CompanyItem]:
+        def _build_item(data: dict[str, Any], raw: dict[str, Any]) -> CompanyItem:
+            op_margin = raw.get("operating_margin_pct", 15.0)
+            curr_ratio = raw.get("current_ratio", 1.4)
+            dscr_val = raw.get("dscr", 1.6)
+            ebitda_val = raw.get("ebitda", 0.0)
+            debt_val = raw.get("total_debt", 0.0)
+            cash_val = raw.get("cash_flow", 0.0)
+
+            # Formatted readable strings
+            ebitda_str = f"₹{ebitda_val / 10000000000:,.0f} Cr" if ebitda_val > 1000000000 else f"${ebitda_val / 1000000:.1f}M"
+            debt_str = f"₹{debt_val / 10000000000:,.0f} Cr" if debt_val > 1000000000 else f"${debt_val / 1000000:.1f}M"
+            cash_str = f"₹{cash_val / 10000000000:,.0f} Cr" if cash_val > 1000000000 else f"${cash_val / 1000000:.1f}M"
+
+            return CompanyItem(
+                id=data["id"],
+                name=data["name"],
+                sector=data["sector"],
+                country=data["country"],
+                founded=data["founded"],
+                revenue=data["revenue"],
+                employees=data["employees"],
+                creditScore=data.get("creditScore") or data.get("credit_score", 70),
+                riskLevel=data.get("riskLevel") or data.get("risk_level", "medium"),
+                loanExposure=data.get("loanExposure") or data.get("loan_exposure", "$100M"),
+                status=data["status"],
+                module=data["module"],
+                progress=data["progress"],
+                eta=data["eta"],
+                lastAnalysis=data.get("lastAnalysis") or data.get("last_analysis", "Done"),
+                ceo=data["ceo"],
+                hq=data["hq"],
+                ebitda=ebitda_str,
+                debt=debt_str,
+                cash=cash_str,
+                profitability=f"{op_margin:.1f}% Margin",
+                liquidity=f"{curr_ratio:.2f}x Current Ratio",
+                dscr=f"{dscr_val:.2f}x DSCR",
+                raw_financials=raw,
+            )
+
         try:
             from ..db.session import SessionLocal
             from ..db.repositories.company_repository import CompanyRepository
@@ -359,30 +399,33 @@ class CompanyService:
                 models = repo.get_all()
                 if models:
                     return [
-                        CompanyItem(
-                            id=m.id,
-                            name=m.name,
-                            sector=m.sector,
-                            country=m.country,
-                            founded=m.founded,
-                            revenue=m.revenue,
-                            employees=m.employees,
-                            creditScore=m.credit_score,
-                            riskLevel=m.risk_level,
-                            loanExposure=m.loan_exposure,
-                            status=m.status,
-                            module=m.module,
-                            progress=m.progress,
-                            eta=m.eta,
-                            lastAnalysis=m.last_analysis,
-                            ceo=m.ceo,
-                            hq=m.hq,
+                        _build_item(
+                            {
+                                "id": m.id,
+                                "name": m.name,
+                                "sector": m.sector,
+                                "country": m.country,
+                                "founded": m.founded,
+                                "revenue": m.revenue,
+                                "employees": m.employees,
+                                "creditScore": m.credit_score,
+                                "riskLevel": m.risk_level,
+                                "loanExposure": m.loan_exposure,
+                                "status": m.status,
+                                "module": m.module,
+                                "progress": m.progress,
+                                "eta": m.eta,
+                                "lastAnalysis": m.last_analysis,
+                                "ceo": m.ceo,
+                                "hq": m.hq,
+                            },
+                            m.raw_financials or {},
                         )
                         for m in models
                     ]
         except Exception:
             pass
-        return [CompanyItem(**c) for c in STATIC_PORTFOLIO]
+        return [_build_item(c, c.get("raw_financials", {})) for c in STATIC_PORTFOLIO]
 
     def list_companies(self) -> list[CompanyItem]:
         return self.get_all_companies()

@@ -65,7 +65,7 @@ const defaultSettings = {
     defaultLandingPage: 'dashboard',
   },
   appearance: {
-    theme: 'dark' as const,
+    theme: 'light' as const,
     sidebarMode: 'expanded' as const,
     fontSize: 'medium' as const,
     density: 'comfortable' as const,

@@ -32,7 +32,24 @@ async def get_loan_recommendation(company_id: str) -> dict:
     elif "M" in exp_str:
         loan_amt = float("".join(c for c in exp_str if c.isdigit() or c == ".")) * 1_000_000.0
 
-    risk_level = "Low" if score >= 80 else "Medium" if score >= 65 else "High" if score >= 45 else "Critical"
+    risk_level = "Low" if score >= 75 else "Medium" if score >= 58 else "High" if score >= 45 else "Critical"
+
+    # Check for executed LangGraph evaluation / human review
+    try:
+        from backend.app.db.session import SessionLocal
+        from backend.app.db.repositories.credit_repository import CreditRepository
+        with SessionLocal() as db:
+            repo = CreditRepository(db)
+            cid_int = int(company_id) if company_id.isdigit() else 1
+            eval_record = repo.get_latest_by_company(cid_int)
+            rec_record = repo.get_latest_recommendation_by_company(cid_int)
+            if eval_record:
+                score = float(eval_record.credit_score)
+                risk_level = eval_record.risk_category
+            if rec_record:
+                loan_amt = float(rec_record.requested_amount)
+    except Exception:
+        pass
 
     # Module risk decomposition derived deterministically from company profile
     financial_risk = round(100.0 - score * 0.85)
@@ -101,7 +118,7 @@ async def get_loan_recommendation(company_id: str) -> dict:
             currency="USD",
         ),
         risk_aggregation=RiskAggregationSummaryInput(
-            overall_risk_score=score,
+            overall_risk_score=round(100.0 - score),
             overall_risk_level=risk_level,
             confidence_score=94.5,
         ),

@@ -1,4 +1,4 @@
-// Liquidity Coverage Ratio (LCR) Gauge Widget
+// Liquidity Coverage Ratio (LCR) — Banking-style widget with bar chart instead of broken gauge
 import React from "react";
 import ReactEChartsCore from "echarts-for-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -11,67 +11,122 @@ interface Props {
 }
 
 export const LiquidityCoverageWidget: React.FC<Props> = ({ data }) => {
+  // Clamp ratio for display (max 200 for visual)
+  const displayRatio = Math.min(data.ratio, 200);
+  const requiredPct = (data.requiredThreshold / 200) * 100;
+  const actualPct  = (displayRatio / 200) * 100;
+
   const option = {
+    tooltip: {
+      trigger: "axis" as const,
+      backgroundColor: "#FFFFFF",
+      borderColor: "#D9E1EA",
+      borderWidth: 1,
+      textStyle: { color: "#172033", fontSize: 11 },
+      formatter: (params: Array<{ value: number; name: string }>) =>
+        `LCR: <strong>${params[0]?.value ?? data.ratio}%</strong>`,
+    },
+    grid: { top: 8, right: 12, bottom: 24, left: 48, containLabel: false },
+    xAxis: {
+      type: "category" as const,
+      data: ["LCR"],
+      axisLine: { lineStyle: { color: "#D9E1EA" } },
+      axisTick: { show: false },
+      axisLabel: { show: false },
+    },
+    yAxis: {
+      type: "value" as const,
+      min: 0,
+      max: 200,
+      axisLine: { show: false },
+      axisTick: { show: false },
+      splitLine: { lineStyle: { color: "#EBF0F7", type: "dashed" as const } },
+      axisLabel: { color: "#5F6F85", fontSize: 10, formatter: "{value}%" },
+    },
     series: [
       {
-        type: "gauge",
-        startAngle: 180,
-        endAngle: 0,
-        min: 0,
-        max: 200,
-        radius: "100%",
-        center: ["50%", "85%"],
-        axisLine: {
-          lineStyle: {
-            width: 8,
-            color: [
-              [0.5, "hsl(352 82% 54%)"], // < 100% Critical Red
-              [0.7, "hsl(272 85% 65%)"],  // Warning buffer Purple
-              [1, "hsl(142 76% 45%)"],   // Strong compliant Green
-            ],
-          },
-        },
-        pointer: {
-          icon: "path://M12.8,0.7l12,80.1c1.2,7.8-4,14.9-11.8,16.1c-0.8,0.1-1.5,0.1-2.3,0l-12-80.1C-1.2,9-0.1,1.2,7.7,0C8.5-0.1,9.3-0.1,10.1,0C11.1,0.1,12,0.3,12.8,0.7z",
-          length: "75%",
-          width: 4,
-          offsetCenter: [0, 5],
-          itemStyle: {
-            color: "hsl(272 20% 70%)",
-          },
-        },
-        axisTick: { show: false },
-        splitLine: { show: false },
-        axisLabel: { show: false },
-        detail: {
-          valueAnimation: true,
-          offsetCenter: [0, -15],
-          fontSize: 22,
-          fontWeight: "bold",
-          formatter: "{value}%",
-          color: "hsl(0 0% 98%)",
-        },
-        data: [{ value: data.ratio }],
+        name: "Required",
+        type: "bar",
+        stack: "lcr",
+        barWidth: 32,
+        data: [data.requiredThreshold],
+        itemStyle: { color: "#D9E1EA", borderRadius: [0, 0, 0, 0] },
+        z: 1,
+      },
+      {
+        name: "Buffer",
+        type: "bar",
+        stack: "lcr",
+        barWidth: 32,
+        data: [Math.max(0, displayRatio - data.requiredThreshold)],
+        itemStyle: { color: "#238B5B", borderRadius: [3, 3, 0, 0] },
+        z: 2,
       },
     ],
+    animation: false,
   };
 
+  const isCompliant = data.ratio >= data.requiredThreshold;
+  const scoreColor = isCompliant ? "#238B5B" : "#C74646";
+
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">Liquidity Coverage Ratio (LCR)</CardTitle>
-        <ShieldCheck className="h-4 w-4 text-emerald-400" />
+    <Card className="border border-[#D9E1EA] bg-white">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 border-b border-[#D9E1EA]">
+        <CardTitle className="text-sm font-semibold text-[#172033]">Liquidity coverage (LCR)</CardTitle>
+        <ShieldCheck className="h-4 w-4 text-[#238B5B]" />
       </CardHeader>
-      <CardContent>
-        <div className="flex justify-center" style={{ height: 120 }}>
-          <ReactEChartsCore key={`lcr-${data.ratio}`} option={option} style={{ height: "100%", width: "100%" }} notMerge />
-        </div>
-        <div className="flex justify-between items-center mb-3">
+      <CardContent className="pt-3 space-y-3">
+        {/* Score display */}
+        <div className="flex items-center justify-between">
+          <div>
+            <span
+              className="text-3xl font-bold"
+              style={{ color: scoreColor, fontVariantNumeric: "tabular-nums" }}
+            >
+              {data.ratio.toFixed(1)}%
+            </span>
+            <span className="text-sm text-[#5F6F85] ml-1">LCR</span>
+          </div>
           <StatusBadge label={data.complianceStatus} variant={getComplianceVariant(data.complianceStatus)} />
-          <span className="text-[10px] text-muted-foreground">Required: {data.requiredThreshold}%</span>
         </div>
-        <MetricRow label="Regulatory Buffer" value={`+${data.buffer.toFixed(1)}%`} />
-        <MetricRow label="Health Score" value={data.regulatoryHealth} />
+
+        {/* Progress bar */}
+        <div className="space-y-1">
+          <div className="relative h-4 w-full rounded overflow-hidden bg-[#EBF0F7]">
+            {/* Required threshold marker */}
+            <div
+              className="absolute top-0 bottom-0 w-0.5 bg-[#C98A16] z-10"
+              style={{ left: `${requiredPct}%` }}
+              title={`Required: ${data.requiredThreshold}%`}
+            />
+            {/* Actual fill */}
+            <div
+              className="absolute top-0 left-0 bottom-0 transition-all rounded"
+              style={{
+                width: `${actualPct}%`,
+                background: isCompliant ? "#238B5B" : "#C74646",
+              }}
+            />
+          </div>
+          <div className="flex justify-between text-[10px] text-[#5F6F85]">
+            <span>0%</span>
+            <span className="text-[#C98A16] font-semibold">Req: {data.requiredThreshold}%</span>
+            <span>200%</span>
+          </div>
+        </div>
+
+        {/* Bar chart */}
+        <ReactEChartsCore
+          key={`lcr-${data.ratio}`}
+          option={option}
+          style={{ height: 110 }}
+          notMerge
+        />
+
+        <div className="pt-1 border-t border-[#EBF0F7]">
+          <MetricRow label="Regulatory Buffer" value={`+${data.buffer.toFixed(1)}%`} />
+          <MetricRow label="Health Score" value={data.regulatoryHealth} />
+        </div>
         <AIInsight text={data.aiAssessment} />
       </CardContent>
     </Card>

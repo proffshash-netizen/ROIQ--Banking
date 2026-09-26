@@ -1,78 +1,138 @@
-// Net Stable Funding Ratio (NSFR) Gauge Widget
+// Net Stable Funding Ratio (NSFR) — Banking-style widget with bar chart instead of broken gauge
 import React from "react";
 import ReactEChartsCore from "echarts-for-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { NSFRVM } from "../types";
 import { formatCurrency } from "../transformers";
 import { StatusBadge, MetricRow, AIInsight, getComplianceVariant } from "./shared";
-import { ShieldAlert } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 interface Props {
   data: NSFRVM;
 }
 
 export const NetStableFundingWidget: React.FC<Props> = ({ data }) => {
+  const displayRatio = Math.min(data.ratio, 200);
+  const requiredPct  = (100 / 200) * 100; // NSFR required = 100%
+  const actualPct    = (displayRatio / 200) * 100;
+  const isCompliant  = data.ratio >= 100;
+
+  // Grouped bar: Available vs Required stable funding
   const option = {
+    tooltip: {
+      trigger: "axis" as const,
+      backgroundColor: "#FFFFFF",
+      borderColor: "#D9E1EA",
+      borderWidth: 1,
+      textStyle: { color: "#172033", fontSize: 11 },
+    },
+    legend: {
+      data: ["Available", "Required"],
+      bottom: 0,
+      textStyle: { color: "#5F6F85", fontSize: 10 },
+    },
+    grid: { top: 8, right: 12, bottom: 28, left: 12, containLabel: true },
+    xAxis: {
+      type: "category" as const,
+      data: ["Stable Funding"],
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: { show: false },
+    },
+    yAxis: {
+      type: "value" as const,
+      axisLine: { show: false },
+      axisTick: { show: false },
+      splitLine: { lineStyle: { color: "#EBF0F7", type: "dashed" as const } },
+      axisLabel: {
+        color: "#5F6F85",
+        fontSize: 10,
+        formatter: (v: number) =>
+          v >= 1_000_000_000
+            ? `$${(v / 1_000_000_000).toFixed(1)}B`
+            : v >= 1_000_000
+            ? `$${(v / 1_000_000).toFixed(0)}M`
+            : String(v),
+      },
+    },
     series: [
       {
-        type: "gauge",
-        startAngle: 180,
-        endAngle: 0,
-        min: 0,
-        max: 200,
-        radius: "100%",
-        center: ["50%", "85%"],
-        axisLine: {
-          lineStyle: {
-            width: 8,
-            color: [
-              [0.5, "hsl(352 82% 54%)"], // Critical Red
-              [0.6, "hsl(272 85% 65%)"], // Buffer Purple
-              [1, "hsl(142 76% 45%)"],   // Compliant Green
-            ],
-          },
-        },
-        pointer: {
-          icon: "path://M12.8,0.7l12,80.1c1.2,7.8-4,14.9-11.8,16.1c-0.8,0.1-1.5,0.1-2.3,0l-12-80.1C-1.2,9-0.1,1.2,7.7,0C8.5-0.1,9.3-0.1,10.1,0C11.1,0.1,12,0.3,12.8,0.7z",
-          length: "75%",
-          width: 4,
-          offsetCenter: [0, 5],
-          itemStyle: {
-            color: "hsl(272 20% 70%)",
-          },
-        },
-        axisTick: { show: false },
-        splitLine: { show: false },
-        axisLabel: { show: false },
-        detail: {
-          valueAnimation: true,
-          offsetCenter: [0, -15],
-          fontSize: 22,
-          fontWeight: "bold",
-          formatter: "{value}%",
-          color: "hsl(0 0% 98%)",
-        },
-        data: [{ value: data.ratio }],
+        name: "Available",
+        type: "bar",
+        barWidth: 28,
+        data: [data.availableStableFunding],
+        itemStyle: { color: "#1E4FA3", borderRadius: [3, 3, 0, 0] },
+      },
+      {
+        name: "Required",
+        type: "bar",
+        barWidth: 28,
+        data: [data.requiredStableFunding],
+        itemStyle: { color: "#D9E1EA", borderRadius: [3, 3, 0, 0] },
       },
     ],
+    animation: false,
   };
 
+  const scoreColor = isCompliant ? "#238B5B" : "#C74646";
+
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">Net Stable Funding Ratio (NSFR)</CardTitle>
-        <ShieldAlert className="h-4 w-4 text-purple-400" />
+    <Card className="border border-[#D9E1EA] bg-white">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 border-b border-[#D9E1EA]">
+        <CardTitle className="text-sm font-semibold text-[#172033]">Net stable funding (NSFR)</CardTitle>
+        <ShieldCheck className="h-4 w-4 text-[#1E4FA3]" />
       </CardHeader>
-      <CardContent>
-        <div className="flex justify-center" style={{ height: 120 }}>
-          <ReactEChartsCore key={`nsfr-${data.ratio}`} option={option} style={{ height: "100%", width: "100%" }} notMerge />
-        </div>
-        <div className="flex justify-between items-center mb-3">
+      <CardContent className="pt-3 space-y-3">
+        {/* Score display */}
+        <div className="flex items-center justify-between">
+          <div>
+            <span
+              className="text-3xl font-bold"
+              style={{ color: scoreColor, fontVariantNumeric: "tabular-nums" }}
+            >
+              {data.ratio.toFixed(1)}%
+            </span>
+            <span className="text-sm text-[#5F6F85] ml-1">NSFR</span>
+          </div>
           <StatusBadge label={data.complianceStatus} variant={getComplianceVariant(data.complianceStatus)} />
-          <span className="text-[10px] text-muted-foreground">Stability Score: {data.fundingStabilityScore}</span>
         </div>
-        <MetricRow label="Available Stable Funding" value={formatCurrency(data.availableStableFunding)} />
-        <MetricRow label="Required Stable Funding" value={formatCurrency(data.requiredStableFunding)} />
+
+        {/* Progress bar */}
+        <div className="space-y-1">
+          <div className="relative h-4 w-full rounded overflow-hidden bg-[#EBF0F7]">
+            <div
+              className="absolute top-0 bottom-0 w-0.5 bg-[#C98A16] z-10"
+              style={{ left: `${requiredPct}%` }}
+              title="Required: 100%"
+            />
+            <div
+              className="absolute top-0 left-0 bottom-0 transition-all rounded"
+              style={{
+                width: `${actualPct}%`,
+                background: isCompliant ? "#1E4FA3" : "#C74646",
+              }}
+            />
+          </div>
+          <div className="flex justify-between text-[10px] text-[#5F6F85]">
+            <span>0%</span>
+            <span className="text-[#C98A16] font-semibold">Req: 100%</span>
+            <span>200%</span>
+          </div>
+        </div>
+
+        {/* Bar chart */}
+        <ReactEChartsCore
+          key={`nsfr-${data.ratio}`}
+          option={option}
+          style={{ height: 120 }}
+          notMerge
+        />
+
+        <div className="pt-1 border-t border-[#EBF0F7]">
+          <MetricRow label="Available Stable Funding" value={formatCurrency(data.availableStableFunding)} />
+          <MetricRow label="Required Stable Funding"  value={formatCurrency(data.requiredStableFunding)} />
+          <MetricRow label="Funding Stability"        value={data.fundingStabilityScore} />
+        </div>
         <AIInsight text={data.aiAssessment} />
       </CardContent>
     </Card>

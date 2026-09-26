@@ -53,8 +53,8 @@ export function AppLayout() {
         <div className="print:hidden">
           <Topbar />
         </div>
-        <main className="flex-1 overflow-y-auto bg-background/50 print:overflow-visible print:bg-white print:p-0">
-          <div className="p-4 sm:p-6 lg:p-8 print:p-0">
+        <main className="flex-1 overflow-y-auto bg-background print:overflow-visible print:bg-white print:p-0">
+          <div className="p-4 sm:p-6 lg:p-8 print:p-0 max-w-[1600px] mx-auto w-full">
             <Outlet />
           </div>
         </main>

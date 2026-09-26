@@ -3,11 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Loader2 } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Loader2, ShieldCheck } from "lucide-react"
 import { useAuthStore } from "@/stores/authStore"
 import { api } from "@/lib/api"
 
@@ -35,127 +31,170 @@ export function Login() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true)
     setError(null)
-    
     try {
       const response = await api.post('/auth/login', {
         username: data.email,
         password: data.password,
       })
-
-      if (response.data && response.data.success) {
+      if (response.data?.success) {
         const authData = response.data.data
-        const token = authData.access_token
-        const role = authData.role
         const user = authData.user || {
-          id: "usr_123",
-          name: data.email === "cco@roiq.ai" ? "Thomas Shelby" : data.email.split("@")[0].toUpperCase(),
-          email: data.email,
-          role: (role as any) || "Corporate Credit Officer",
+          id: "usr_123", name: data.email === "cco@roiq.ai" ? "Thomas Shelby" : data.email.split("@")[0],
+          email: data.email, role: authData.role || "Corporate Credit Officer",
         }
-        login(user, token)
+        login(user, authData.access_token)
         navigate("/")
         return
-      } else {
-        const msg = response.data?.error?.message || "Invalid credentials."
-        setError(msg)
       }
+      setError(response.data?.error?.message || "Invalid credentials.")
     } catch (err: any) {
-      // Local fallback for offline demo support
       if (data.email === "cco@roiq.ai" && (data.password === "password123" || data.password === "password")) {
-        login({
-          id: "usr_123",
-          name: "Thomas Shelby",
-          email: "cco@roiq.ai",
-          role: "Corporate Credit Officer"
-        }, "mock_jwt_token_12345")
+        login({ id: "usr_123", name: "Thomas Shelby", email: "cco@roiq.ai", role: "Corporate Credit Officer" }, "mock_jwt_token_12345")
         navigate("/")
         return
       }
-      const errMsg = err.response?.data?.error?.message || err.message || "Failed to authenticate with backend."
-      setError(errMsg)
+      setError(err.response?.data?.error?.message || err.message || "Failed to authenticate.")
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background/50 p-4">
-      <Card className="w-full max-w-md shadow-2xl border-border/50">
-        <CardHeader className="space-y-3 text-center">
-          <div className="flex justify-center mb-4">
-            <div className="bg-primary/10 p-3 rounded-xl border border-primary/20">
-              <svg className="h-10 w-10 text-primary transform -rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="10" cy="10" r="6" />
-                <line x1="21" y1="21" x2="14.5" y2="14.5" />
-                <text x="7.5" y="13.5" fontSize="10" fontWeight="bold" fill="currentColor" stroke="none" fontFamily="sans-serif">$</text>
-              </svg>
+    <div className="min-h-screen flex" style={{ background: "#F5F7FA" }}>
+
+      {/* ── Left panel — Brand ── */}
+      <div
+        className="hidden lg:flex flex-col justify-between w-80 shrink-0 p-8"
+        style={{ background: "#123B78" }}
+      >
+        {/* Top brand */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded bg-[#1E4FA3] border border-[#2F6FD6]/50 flex items-center justify-center">
+              <span className="text-white font-extrabold text-lg">R</span>
+            </div>
+            <div>
+              <div className="text-white font-bold text-lg tracking-wide">ROIQ</div>
+              <div className="text-[#8BAED4] text-xs font-medium">Corporate Banking</div>
             </div>
           </div>
-          <CardTitle className="text-3xl font-bold tracking-tight">ROIQ</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Enterprise Corporate Credit Intelligence
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium leading-none" htmlFor="email">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@roiq.ai"
-                {...register("email")}
-                className="bg-background"
-                disabled={isLoading}
-              />
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
-              )}
+          <div className="border-t border-[#1a4d8f]" />
+          <div className="space-y-4">
+            <h2 className="text-white font-bold text-xl leading-snug">
+              Enterprise Credit Intelligence Platform
+            </h2>
+            <p className="text-[#8BAED4] text-sm leading-relaxed">
+              Institutional credit risk analysis, regulatory-grade loan decisioning, and portfolio risk management — built for credit officers, relationship managers, and loan committees.
+            </p>
+          </div>
+          <div className="space-y-3">
+            {[
+              "Corporate Credit Risk Assessment",
+              "Macroeconomic Scenario Forecasting",
+              "Automated Loan Recommendation Engine",
+              "Executive Credit Committee Reports",
+            ].map(item => (
+              <div key={item} className="flex items-center gap-2">
+                <ShieldCheck className="h-3.5 w-3.5 text-[#5CA0F5] shrink-0" />
+                <span className="text-[13px] text-[#A8C4E5]">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom notice */}
+        <div className="text-[11px] text-[#5F7A9F] leading-relaxed">
+          Authorized personnel only. All access is subject to continuous monitoring and regulatory compliance audit.
+        </div>
+      </div>
+
+      {/* ── Right panel — Login form ── */}
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        <div className="w-full max-w-sm">
+
+          {/* Mobile logo */}
+          <div className="lg:hidden flex items-center gap-2 mb-8">
+            <div className="h-8 w-8 rounded bg-[#1E4FA3] flex items-center justify-center">
+              <span className="text-white font-extrabold text-sm">R</span>
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium leading-none" htmlFor="password">
+            <span className="text-xl font-bold text-[#172033]">ROIQ</span>
+          </div>
+
+          <div
+            className="p-8"
+            style={{ background: "#FFFFFF", border: "1px solid #D9E1EA", borderRadius: "6px" }}
+          >
+            <h1 className="text-xl font-bold text-[#172033] mb-1">Sign In</h1>
+            <p className="text-sm text-[#5F6F85] mb-6">
+              Enter your credentials to access the credit workstation.
+            </p>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[13px] font-semibold text-[#172033] block" htmlFor="email">
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="name@roiq.ai"
+                  {...register("email")}
+                  className="bank-input"
+                  disabled={isLoading}
+                />
+                {errors.email && (
+                  <p className="text-xs text-[#C74646]">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[13px] font-semibold text-[#172033] block" htmlFor="password">
                   Password
                 </label>
+                <input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                  className="bank-input"
+                  disabled={isLoading}
+                />
+                {errors.password && (
+                  <p className="text-xs text-[#C74646]">{errors.password.message}</p>
+                )}
               </div>
-              <Input
-                id="password"
-                type="password"
-                {...register("password")}
-                className="bg-background"
-                disabled={isLoading}
-              />
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password.message}</p>
-              )}
-            </div>
-            
-            {error && (
-              <div className="p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-md">
-                {error}
-              </div>
-            )}
 
-            <Button type="submit" className="w-full h-11 text-base font-medium" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Authenticating...
-                </>
-              ) : (
-                "Sign In"
+              {error && (
+                <div
+                  className="p-3 text-sm text-[#C74646] rounded"
+                  style={{ background: "#FBE8E8", border: "1px solid #F0BABA" }}
+                >
+                  {error}
+                </div>
               )}
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-center border-t border-border/50 pt-6">
-          <p className="text-xs text-muted-foreground text-center">
-            Authorized personnel only. Access is continuously monitored.
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="btn-primary w-full justify-center py-2.5 text-sm mt-2"
+              >
+                {isLoading ? (
+                  <><Loader2 className="h-4 w-4 animate-spin" /> Authenticating...</>
+                ) : "Sign In to ROIQ"}
+              </button>
+            </form>
+
+            <div className="mt-4 pt-4 border-t border-[#D9E1EA]">
+              <p className="text-[11px] text-[#5F6F85] text-center">
+                Default credentials: cco@roiq.ai / password123
+              </p>
+            </div>
+          </div>
+
+          <p className="text-[11px] text-[#5F6F85] text-center mt-4">
+            ROIQ v2.4 · Corporate Banking Platform · ROIQ Financial Technologies
           </p>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

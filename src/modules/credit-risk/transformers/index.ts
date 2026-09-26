@@ -228,7 +228,7 @@ export function transformCreditRisk(raw: CreditRiskInput): CreditRiskVM {
   const defaults = rec(raw.default_history);
   const ratios = rec(raw.debt_ratios);
 
-  const creditScore = safeNum(history.credit_score, 700);
+  const creditScore = safeNum(history.credit_score, 72);
   const debtOutstanding = safeNum(debt.total_outstanding);
   const debtToEquity = safeNum(ratios.debt_to_equity);
   const interestCoverage = safeNum(ratios.interest_coverage);
@@ -251,10 +251,10 @@ export function transformCreditRisk(raw: CreditRiskInput): CreditRiskVM {
     {
       label: "Credit Score",
       value: creditScore,
-      formattedValue: `${creditScore}`,
+      formattedValue: `${creditScore}/100`,
       unit: "points",
-      riskLevel: calculateInverseRiskLevel(creditScore, { critical: 580, high: 650, moderate: 740 }),
-      interpretation: creditScore >= 740 ? "Excellent credit profile." : creditScore >= 650 ? "Good credit standing with room for improvement." : "Below-average credit profile requires monitoring.",
+      riskLevel: creditScore >= 75 ? "Low" : creditScore >= 58 ? "Moderate" : creditScore >= 45 ? "High" : "Critical",
+      interpretation: creditScore >= 75 ? "Excellent institutional credit profile." : creditScore >= 58 ? "Moderate credit standing with monitored covenants." : "Elevated risk credit profile requiring committee oversight.",
     },
     {
       label: "Debt Outstanding",
@@ -362,7 +362,7 @@ export function transformCreditRisk(raw: CreditRiskInput): CreditRiskVM {
     })),
     summary: {
       currentRating: safeStr(raw.credit_rating, "NR"),
-      probabilityOfDefault: historicalDefaults > 2 ? 8.5 : historicalDefaults > 0 ? 2.8 : 0.5,
+      probabilityOfDefault: safeNum(ratios.probability_of_default, historicalDefaults > 2 ? 8.5 : historicalDefaults > 0 ? 2.8 : 0.5),
       financialLeverage: debtToEquity > 2.0 ? "High" : debtToEquity > 1.0 ? "Moderate" : "Low",
       repaymentQuality: paymentHistoryPct >= 95 ? "Excellent" : paymentHistoryPct >= 85 ? "Good" : "Below Average",
       debtBurden: debtOutstanding > 5_000_000_000 ? "Heavy" : debtOutstanding > 1_000_000_000 ? "Moderate" : "Light",

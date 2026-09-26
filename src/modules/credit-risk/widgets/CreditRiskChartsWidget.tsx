@@ -1,41 +1,39 @@
 // Credit Risk – Credit Risk Charts Widget
-// Debt Structure, Debt Ratios, Credit Utilization Gauge, Rating History
 import React from "react";
 import ReactEChartsCore from "echarts-for-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { CreditRiskVM } from "../types";
-
 
 interface Props {
   data: CreditRiskVM;
 }
 
 export const CreditRiskChartsWidget: React.FC<Props> = ({ data }) => {
-  // Debt Ratios – Bar Chart with threshold markers
   const debtRatiosOption = {
     tooltip: {
       trigger: "axis" as const,
-      backgroundColor: "hsl(272 32% 10%)",
-      borderColor: "hsl(272 30% 20%)",
-      textStyle: { color: "hsl(270 20% 95%)", fontSize: 11 },
+      backgroundColor: "#FFFFFF",
+      borderColor: "#E2E8F0",
+      borderWidth: 1,
+      textStyle: { color: "#172033", fontSize: 12 },
     },
     legend: {
-      data: ["Actual", "Threshold"],
+      data: ["Actual", "Benchmark threshold"],
       bottom: 0,
-      textStyle: { color: "hsl(272 15% 68%)", fontSize: 10 },
+      textStyle: { color: "#64748B", fontSize: 11 },
     },
-    grid: { top: 20, right: 30, bottom: 40, left: 50, containLabel: false },
+    grid: { top: 20, right: 20, bottom: 40, left: 40, containLabel: true },
     xAxis: {
       type: "category" as const,
       data: data.debtRatios.map((r) => r.name),
-      axisLine: { lineStyle: { color: "hsl(272 30% 20%)" } },
-      axisLabel: { color: "hsl(272 15% 68%)", fontSize: 10 },
+      axisLine: { lineStyle: { color: "#E2E8F0" } },
+      axisLabel: { color: "#64748B", fontSize: 11 },
     },
     yAxis: {
       type: "value" as const,
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: "hsl(272 25% 15%)", type: "dashed" as const } },
-      axisLabel: { color: "hsl(272 15% 68%)", fontSize: 10 },
+      splitLine: { lineStyle: { color: "#F1F5F9", type: "dashed" as const } },
+      axisLabel: { color: "#64748B", fontSize: 11 },
     },
     series: [
       {
@@ -44,18 +42,18 @@ export const CreditRiskChartsWidget: React.FC<Props> = ({ data }) => {
         data: data.debtRatios.map((r) => ({
           value: r.value,
           itemStyle: {
-            color: r.value > r.threshold ? "hsl(352 82% 54%)" : "hsl(142 76% 45%)",
+            color: r.value > r.threshold ? "#C53D3D" : "#16805B",
             borderRadius: [4, 4, 0, 0],
           },
         })),
-        barWidth: 28,
+        barWidth: 24,
       },
       {
-        name: "Threshold",
+        name: "Benchmark threshold",
         type: "bar",
         data: data.debtRatios.map((r) => r.threshold),
-        itemStyle: { color: "hsl(272 40% 32%)", borderRadius: [4, 4, 0, 0] },
-        barWidth: 28,
+        itemStyle: { color: "#94A3B8", borderRadius: [4, 4, 0, 0] },
+        barWidth: 24,
       },
     ],
     animation: false,
@@ -63,15 +61,15 @@ export const CreditRiskChartsWidget: React.FC<Props> = ({ data }) => {
 
   return (
     <div>
-      {/* Debt Ratios */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Debt Ratios vs Thresholds</CardTitle>
+      <Card className="border border-[#E2E8F0] bg-white">
+        <CardHeader className="pb-2 border-b border-[#E2E8F0]">
+          <CardTitle className="text-sm font-semibold text-[#172033]">Debt ratios vs covenants</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <ReactEChartsCore key={`credit-bar-${data.debtRatios.map(r => r.value).join('-')}`} option={debtRatiosOption} style={{ height: 220 }} notMerge />
         </CardContent>
       </Card>
     </div>
   );
 };
+

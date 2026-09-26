@@ -38,7 +38,7 @@ async def get_executive_report(company_id: str) -> dict:
     elif "M" in exp_str:
         raw_amt = float("".join(c for c in exp_str if c.isdigit() or c == ".")) * 1_000_000.0
 
-    risk_level = "Low" if score >= 80 else "Medium" if score >= 65 else "High" if score >= 45 else "Critical"
+    risk_level = "Low" if score >= 75 else "Medium" if score >= 58 else "High" if score >= 45 else "Critical"
 
     decision_map = {
         "Low": "APPROVE",
@@ -48,8 +48,29 @@ async def get_executive_report(company_id: str) -> dict:
     }
     decision = decision_map[risk_level]
 
+    officer_signoff = None
+    try:
+        from backend.app.db.session import SessionLocal
+        from backend.app.db.repositories.credit_repository import CreditRepository
+        with SessionLocal() as db:
+            repo = CreditRepository(db)
+            cid_int = int(cid) if str(cid).isdigit() else 1
+            eval_record = repo.get_latest_by_company(cid_int)
+            rec_record = repo.get_latest_recommendation_by_company(cid_int)
+            review_record = repo.get_latest_human_review_by_company(cid_int)
+            if eval_record:
+                score = float(eval_record.credit_score)
+                risk_level = eval_record.risk_category
+            if rec_record:
+                decision = rec_record.decision.replace("_", " ") if rec_record.decision else decision
+                raw_amt = float(rec_record.requested_amount)
+            if review_record:
+                officer_signoff = f"Officer Sign-off ({review_record.officer}): {review_record.notes} (Approved: {review_record.approved})"
+    except Exception as e:
+        print("EXECUTIVE_REPORT_DB_ERR:", e)
+
     rating_map = {
-        "Low": "A- (Investment Grade)",
+        "Low": "A- (Investment Grade)" if score < 85 else "AA- (Investment Grade)",
         "Medium": "BBB (Investment Grade)",
         "High": "BB (Non-Investment Grade)",
         "Critical": "CCC (High Risk)",
@@ -137,7 +158,7 @@ async def get_executive_report(company_id: str) -> dict:
             f"Underwriting model assigned {risk_level} risk standing (score {score:.1f}/100).",
             f"Requested facility of {exp_str} evaluated with 36-month amortization.",
             f"Human review {'required' if risk_level != 'Low' else 'optional'} under bank risk policy.",
-        ],
+        ] + ([officer_signoff] if officer_signoff else []),
         conditions=ConditionsSection(
             isConditional=decision == "APPROVE WITH CONDITIONS",
             isRejected=decision == "REJECT",

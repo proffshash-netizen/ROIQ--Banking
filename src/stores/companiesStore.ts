@@ -18,6 +18,12 @@ export interface Company {
   lastAnalysis: string
   ceo: string
   hq: string
+  ebitda?: string
+  debt?: string
+  cash?: string
+  profitability?: string
+  liquidity?: string
+  dscr?: string
 }
 
 export const staticCompanies: Company[] = [
@@ -39,6 +45,12 @@ export const staticCompanies: Company[] = [
     lastAnalysis: "In Progress",
     ceo: "T. V. Narendran",
     hq: "Mumbai, India",
+    ebitda: "₹32,800 Cr",
+    debt: "₹85,000 Cr",
+    cash: "₹28,000 Cr",
+    profitability: "13.5% Margin",
+    liquidity: "1.45x Current Ratio",
+    dscr: "1.82x DSCR",
   },
   {
     id: 2,
@@ -58,6 +70,12 @@ export const staticCompanies: Company[] = [
     lastAnalysis: "In Progress",
     ceo: "Arun Kumar Singh",
     hq: "New Delhi, India",
+    ebitda: "₹1,15,000 Cr",
+    debt: "₹1,28,000 Cr",
+    cash: "₹98,000 Cr",
+    profitability: "17.6% Margin",
+    liquidity: "1.95x Current Ratio",
+    dscr: "2.45x DSCR",
   },
   {
     id: 3,
@@ -77,6 +95,12 @@ export const staticCompanies: Company[] = [
     lastAnalysis: "In Progress",
     ceo: "Rajeev Jain",
     hq: "Pune, India",
+    ebitda: "₹18,200 Cr",
+    debt: "₹2,40,000 Cr",
+    cash: "₹12,000 Cr",
+    profitability: "33.1% Margin",
+    liquidity: "2.10x Current Ratio",
+    dscr: "1.65x DSCR",
   },
   {
     id: 4,
@@ -96,6 +120,12 @@ export const staticCompanies: Company[] = [
     lastAnalysis: "2 min ago",
     ceo: "Gautam Adani",
     hq: "Ahmedabad, India",
+    ebitda: "₹19,000 Cr",
+    debt: "₹1,42,000 Cr",
+    cash: "₹14,500 Cr",
+    profitability: "8.3% Margin",
+    liquidity: "1.05x Current Ratio",
+    dscr: "1.15x DSCR",
   },
   {
     id: 5,
@@ -115,6 +145,12 @@ export const staticCompanies: Company[] = [
     lastAnalysis: "11 min ago",
     ceo: "Sunil Duggal",
     hq: "London, UK",
+    ebitda: "₹18,500 Cr",
+    debt: "₹1,25,000 Cr",
+    cash: "₹9,800 Cr",
+    profitability: "12.6% Margin",
+    liquidity: "0.85x Current Ratio",
+    dscr: "0.88x DSCR",
   },
   {
     id: 6,
@@ -134,6 +170,12 @@ export const staticCompanies: Company[] = [
     lastAnalysis: "34 min ago",
     ceo: "Mukesh Ambani",
     hq: "Mumbai, India",
+    ebitda: "₹1,78,000 Cr",
+    debt: "₹3,10,000 Cr",
+    cash: "₹1,52,000 Cr",
+    profitability: "18.3% Margin",
+    liquidity: "1.88x Current Ratio",
+    dscr: "2.75x DSCR",
   },
   {
     id: 7,
@@ -153,6 +195,12 @@ export const staticCompanies: Company[] = [
     lastAnalysis: "3 hr ago",
     ceo: "Sashidhar Jagdishan",
     hq: "Mumbai, India",
+    ebitda: "₹82,000 Cr",
+    debt: "₹24,50,000 Cr",
+    cash: "₹68,000 Cr",
+    profitability: "35.7% Margin",
+    liquidity: "2.45x Current Ratio",
+    dscr: "1.95x DSCR",
   },
   {
     id: 8,
@@ -172,6 +220,12 @@ export const staticCompanies: Company[] = [
     lastAnalysis: "2 hr ago",
     ceo: "Anish Shah",
     hq: "Mumbai, India",
+    ebitda: "₹21,000 Cr",
+    debt: "₹74,000 Cr",
+    cash: "₹17,500 Cr",
+    profitability: "15.3% Margin",
+    liquidity: "1.35x Current Ratio",
+    dscr: "1.72x DSCR",
   },
   {
     id: 9,
@@ -191,6 +245,12 @@ export const staticCompanies: Company[] = [
     lastAnalysis: "1 hr ago",
     ceo: "Punit Goenka",
     hq: "Mumbai, India",
+    ebitda: "₹950 Cr",
+    debt: "₹3,800 Cr",
+    cash: "₹650 Cr",
+    profitability: "11.5% Margin",
+    liquidity: "0.92x Current Ratio",
+    dscr: "0.72x DSCR",
   },
 ]
 

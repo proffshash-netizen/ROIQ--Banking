@@ -42,12 +42,13 @@ def ingest_node(state: LoanAIState) -> LoanAIState:
     interest_expense = float(customer_data.get("interest_expense") or (total_debt * 0.065))
     requested_loan = float(customer_data.get("requested_loan") or 120_000_000.0)
 
-    # Calculate baseline ratios
-    debt_to_equity = round(total_debt / max(equity, 1.0), 2)
-    interest_coverage = round(ebitda / max(interest_expense, 1.0), 2)
-    debt_to_ebitda = round(total_debt / max(ebitda, 1.0), 2)
-    dscr = round(cash_flow / max(interest_expense + (requested_loan * 0.15), 1.0), 2)
-    operating_margin = round((ebitda / max(revenue, 1.0)) * 100, 1)
+    # Calculate baseline ratios or use pre-calculated audited figures
+    debt_to_equity = float(customer_data.get("debt_to_equity") or round(total_debt / max(equity, 1.0), 2))
+    interest_coverage = float(customer_data.get("interest_coverage") or round(ebitda / max(interest_expense, 1.0), 2))
+    debt_to_ebitda = float(customer_data.get("debt_to_ebitda") or round(total_debt / max(ebitda, 1.0), 2))
+    dscr = float(customer_data.get("dscr") or round(cash_flow / max(interest_expense + (requested_loan * 0.15), 1.0), 2))
+    operating_margin = float(customer_data.get("operating_margin_pct") or round((ebitda / max(revenue, 1.0)) * 100, 1))
+    current_ratio = float(customer_data.get("current_ratio") or 1.45)
 
     metrics = {
         "revenue": revenue,
@@ -59,6 +60,7 @@ def ingest_node(state: LoanAIState) -> LoanAIState:
         "debt_to_ebitda": debt_to_ebitda,
         "dscr": dscr,
         "operating_margin_pct": operating_margin,
+        "current_ratio": current_ratio,
         "requested_loan": requested_loan,
     }
 
@@ -121,31 +123,36 @@ def evaluate_node(state: LoanAIState) -> LoanAIState:
     Computes corporate credit score, default probability, and distress risk index.
     Classifies company into risk categories (Low, Medium, High, Critical).
     """
+    customer_data = state.get("customer_data", {})
     metrics = state.get("financial_metrics", {})
     debt_to_equity = float(metrics.get("debt_to_equity", 2.2))
     interest_coverage = float(metrics.get("interest_coverage", 2.5))
     dscr = float(metrics.get("dscr", 1.4))
 
-    # Base scoring formula (0 - 100)
-    score = 100.0
-    score -= min(40.0, max(0.0, (debt_to_equity - 1.0) * 18.0))
-    if interest_coverage < 3.0:
-        score -= min(30.0, (3.0 - interest_coverage) * 12.0)
-    if dscr < 1.6:
-        score -= min(25.0, (1.6 - dscr) * 20.0)
+    # Base scoring: calibrate with portfolio underwriter profile if available, or compute deterministically
+    base_score = customer_data.get("credit_score")
+    if base_score is not None:
+        score = float(base_score)
+    else:
+        score = 100.0
+        score -= min(40.0, max(0.0, (debt_to_equity - 1.0) * 18.0))
+        if interest_coverage < 3.0:
+            score -= min(30.0, (3.0 - interest_coverage) * 12.0)
+        if dscr < 1.6:
+            score -= min(25.0, (1.6 - dscr) * 20.0)
 
     score = round(max(15.0, min(95.0, score)), 1)
 
     # Risk categorization
     if score >= 75.0:
         risk_category = "Low"
-        rating = "A-"
-        p_default = 0.018
+        rating = "AA-" if score >= 85.0 else "A-"
+        p_default = 0.015 if score >= 85.0 else 0.022
     elif score >= 58.0:
         risk_category = "Medium"
         rating = "BBB"
-        p_default = 0.042
-    elif score >= 38.0:
+        p_default = 0.045
+    elif score >= 45.0:
         risk_category = "High"
         rating = "BB-"
         p_default = 0.095
