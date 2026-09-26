@@ -16,28 +16,28 @@ export const CorporateFinancialWidget: React.FC<Props> = ({ data }) => {
   const lineOption = {
     tooltip: {
       trigger: "axis" as const,
-      backgroundColor: "hsl(240 10% 8%)",
-      borderColor: "hsl(240 3.7% 20%)",
-      textStyle: { color: "hsl(0 0% 90%)", fontSize: 11 },
+      backgroundColor: "hsl(272 38% 8%)",
+      borderColor: "hsl(272 30% 20%)",
+      textStyle: { color: "hsl(272 20% 92%)", fontSize: 11 },
     },
     legend: {
       data: ["Revenue", "Net Income", "Operating Income"],
       bottom: 0,
-      textStyle: { color: "hsl(240 5% 64.9%)", fontSize: 10 },
+      textStyle: { color: "hsl(272 20% 70%)", fontSize: 10 },
     },
     grid: { top: 20, right: 16, bottom: 40, left: 50 },
     xAxis: {
       type: "category" as const,
       data: data.trends.map((t) => t.period),
-      axisLine: { lineStyle: { color: "hsl(240 3.7% 20%)" } },
-      axisLabel: { color: "hsl(240 5% 64.9%)", fontSize: 10 },
+      axisLine: { lineStyle: { color: "hsl(272 30% 20%)" } },
+      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10 },
     },
     yAxis: {
       type: "value" as const,
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: "hsl(240 3.7% 15%)", type: "dashed" as const } },
+      splitLine: { lineStyle: { color: "hsl(272 30% 16%)", type: "dashed" as const } },
       axisLabel: {
-        color: "hsl(240 5% 64.9%)",
+        color: "hsl(272 20% 70%)",
         fontSize: 10,
         formatter: (v: number) => `$${(v / 1_000_000_000).toFixed(1)}B`,
       },
@@ -49,7 +49,7 @@ export const CorporateFinancialWidget: React.FC<Props> = ({ data }) => {
         data: data.trends.map((t) => t.revenue),
         smooth: true,
         lineStyle: { width: 3 },
-        itemStyle: { color: "hsl(220 70% 50%)" },
+        itemStyle: { color: "hsl(272 85% 65%)" },
       },
       {
         name: "Operating Income",
@@ -57,7 +57,7 @@ export const CorporateFinancialWidget: React.FC<Props> = ({ data }) => {
         data: data.trends.map((t) => t.operatingIncome),
         smooth: true,
         lineStyle: { width: 2 },
-        itemStyle: { color: "hsl(280 65% 60%)" },
+        itemStyle: { color: "hsl(285 85% 72%)" },
       },
       {
         name: "Net Income",
@@ -65,8 +65,8 @@ export const CorporateFinancialWidget: React.FC<Props> = ({ data }) => {
         data: data.trends.map((t) => t.netIncome),
         smooth: true,
         lineStyle: { width: 2 },
-        itemStyle: { color: "hsl(160 60% 45%)" },
-        areaStyle: { color: "hsla(160 60% 45% / 0.05)" },
+        itemStyle: { color: "hsl(142 76% 45%)" },
+        areaStyle: { color: "hsla(142 76% 45% / 0.1)" },
       },
     ],
   };
@@ -75,38 +75,38 @@ export const CorporateFinancialWidget: React.FC<Props> = ({ data }) => {
   const barOption = {
     tooltip: {
       trigger: "axis" as const,
-      backgroundColor: "hsl(240 10% 8%)",
-      borderColor: "hsl(240 3.7% 20%)",
-      textStyle: { color: "hsl(0 0% 90%)", fontSize: 11 },
+      backgroundColor: "hsl(272 38% 8%)",
+      borderColor: "hsl(272 30% 20%)",
+      textStyle: { color: "hsl(272 20% 92%)", fontSize: 11 },
     },
     grid: { top: 20, right: 16, bottom: 20, left: 40 },
     xAxis: {
       type: "category" as const,
       data: ["ROE", "ROA", "Current Ratio", "Quick Ratio", "Debt to Equity"],
-      axisLine: { lineStyle: { color: "hsl(240 3.7% 20%)" } },
-      axisLabel: { color: "hsl(240 5% 64.9%)", fontSize: 9 },
+      axisLine: { lineStyle: { color: "hsl(272 30% 20%)" } },
+      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 9 },
     },
     yAxis: {
       type: "value" as const,
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: "hsl(240 3.7% 15%)", type: "dashed" as const } },
-      axisLabel: { color: "hsl(240 5% 64.9%)", fontSize: 10 },
+      splitLine: { lineStyle: { color: "hsl(272 30% 16%)", type: "dashed" as const } },
+      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10 },
     },
     series: [
       {
         type: "bar",
         data: [
-          { value: data.roe, itemStyle: { color: "hsl(220 70% 50%)" } },
-          { value: data.roa, itemStyle: { color: "hsl(200 80% 50%)" } },
-          { value: data.currentRatio * 10, itemStyle: { color: "hsl(160 60% 45%)" } }, // Scale ratio for comparison
-          { value: data.quickRatio * 10, itemStyle: { color: "hsl(30 80% 55%)" } },
-          { value: data.debtToEquity * 10, itemStyle: { color: "hsl(340 75% 55%)" } },
+          { value: data.roe, itemStyle: { color: "hsl(272 85% 65%)" } },
+          { value: data.roa, itemStyle: { color: "hsl(285 85% 72%)" } },
+          { value: data.currentRatio * 10, itemStyle: { color: "hsl(142 76% 45%)" } },
+          { value: data.quickRatio * 10, itemStyle: { color: "hsl(158 80% 36%)" } },
+          { value: data.debtToEquity * 10, itemStyle: { color: "hsl(352 82% 54%)" } },
         ],
         barWidth: "40%",
         label: {
           show: true,
           position: "top",
-          color: "hsl(240 5% 64.9%)",
+          color: "hsl(272 20% 70%)",
           fontSize: 9,
           formatter: (p: { name: string; value: number }) => {
             if (["ROE", "ROA"].includes(p.name)) return `${p.value.toFixed(1)}%`;
@@ -121,14 +121,14 @@ export const CorporateFinancialWidget: React.FC<Props> = ({ data }) => {
     <Card className="col-span-1 lg:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Corporate Financial Analysis</CardTitle>
-        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+        <TrendingUp className="h-4 w-4 text-purple-400" />
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Core KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
             <span className="text-[10px] text-muted-foreground block uppercase font-medium">Revenue</span>
-            <span className="text-lg font-bold text-blue-400">{formatCurrency(data.currentRevenue)}</span>
+            <span className="text-lg font-bold text-purple-400">{formatCurrency(data.currentRevenue)}</span>
           </div>
           <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
             <span className="text-[10px] text-muted-foreground block uppercase font-medium">Net Profit</span>
@@ -140,7 +140,7 @@ export const CorporateFinancialWidget: React.FC<Props> = ({ data }) => {
           </div>
           <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
             <span className="text-[10px] text-muted-foreground block uppercase font-medium">Free Cash Flow</span>
-            <span className="text-lg font-bold text-indigo-400">{formatCurrency(data.freeCashFlow)}</span>
+            <span className="text-lg font-bold text-purple-300">{formatCurrency(data.freeCashFlow)}</span>
           </div>
         </div>
 

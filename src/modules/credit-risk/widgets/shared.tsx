@@ -9,10 +9,10 @@ type BadgeVariant = "success" | "warning" | "danger" | "info" | "neutral";
 
 const variantClasses: Record<BadgeVariant, string> = {
   success: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-  warning: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+  warning: "bg-purple-500/15 text-purple-400 border-purple-500/30",
   danger: "bg-red-500/15 text-red-400 border-red-500/30",
-  info: "bg-blue-500/15 text-blue-400 border-blue-500/30",
-  neutral: "bg-zinc-500/15 text-zinc-400 border-zinc-500/30",
+  info: "bg-purple-500/15 text-purple-300 border-purple-500/30",
+  neutral: "bg-purple-950/40 text-purple-200/70 border-purple-500/20",
 };
 
 export function getRiskVariant(level: RiskLevel | string): BadgeVariant {
@@ -27,11 +27,11 @@ export function getRiskVariant(level: RiskLevel | string): BadgeVariant {
 
 export function getRiskColor(level: RiskLevel | string): string {
   switch (level) {
-    case "Low": return "hsl(160 60% 45%)";
-    case "Moderate": return "hsl(30 80% 55%)";
-    case "High": return "hsl(0 70% 55%)";
-    case "Critical": return "hsl(0 85% 45%)";
-    default: return "hsl(240 5% 65%)";
+    case "Low": return "hsl(142 76% 45%)";
+    case "Moderate": return "hsl(272 85% 65%)";
+    case "High": return "hsl(352 82% 54%)";
+    case "Critical": return "hsl(350 85% 42%)";
+    default: return "hsl(272 40% 70%)";
   }
 }
 
@@ -86,10 +86,10 @@ interface AIInsightProps {
 }
 
 export const AIInsight: React.FC<AIInsightProps> = ({ text, title = "AI Insight" }) => (
-  <div className="mt-4 rounded-lg bg-blue-500/5 border border-blue-500/10 p-3">
+  <div className="mt-4 rounded-lg bg-purple-500/10 border border-purple-500/20 p-3">
     <div className="flex items-center gap-1.5 mb-1.5">
-      <div className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-blue-400">{title}</span>
+      <div className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse" />
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-purple-400">{title}</span>
     </div>
     <p className="text-xs text-muted-foreground leading-relaxed">{text}</p>
   </div>

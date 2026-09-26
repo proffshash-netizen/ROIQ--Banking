@@ -12,8 +12,8 @@ import { useDashboardStore } from "@/stores/dashboardStore"
 import { fetchDashboardKPIs } from "@/services/dashboard.service"
 import { settingsService } from "@/services/settings.service"
 
-const priorityColor = { high: "text-rose-400 bg-rose-400/10", medium: "text-amber-400 bg-amber-400/10", low: "text-emerald-400 bg-emerald-400/10" }
-const severityColor = { critical: "border-rose-500/50 bg-rose-500/5", high: "border-amber-500/50 bg-amber-500/5" }
+const priorityColor = { high: "text-red-400 bg-red-400/10 border border-red-500/20", medium: "text-purple-400 bg-purple-400/10 border border-purple-500/20", low: "text-emerald-400 bg-emerald-400/10 border border-emerald-500/20" }
+const severityColor = { critical: "border-red-500/50 bg-red-500/10 text-red-300", high: "border-red-500/30 bg-red-500/5 text-red-400" }
 
 export function Dashboard() {
   const navigate = useNavigate()
@@ -81,7 +81,7 @@ export function Dashboard() {
     id: i + 1,
     type: i % 2 === 0 ? "analysis" : "review",
     icon: i % 2 === 0 ? BarChart3 : Eye,
-    color: c.riskLevel === "critical" ? "text-rose-400" : c.riskLevel === "high" ? "text-amber-400" : "text-blue-400",
+    color: c.riskLevel === "critical" ? "text-red-400" : c.riskLevel === "high" ? "text-red-400" : "text-purple-400",
     title: c.riskLevel === "critical" ? "High-risk flag raised" : "Credit risk analysis completed",
     subject: c.name,
     time: `${(i + 1) * 12} min ago`,
@@ -126,7 +126,7 @@ export function Dashboard() {
         <Card className="hover:border-primary/40 transition-colors cursor-pointer" onClick={() => navigate("/companies")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Companies Evaluated</CardTitle>
-            <Building2 className="h-4 w-4 text-blue-400" />
+            <Building2 className="h-4 w-4 text-purple-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{companiesEvaluated}</div>
@@ -140,7 +140,7 @@ export function Dashboard() {
         <Card className="hover:border-primary/40 transition-colors cursor-pointer" onClick={() => navigate("/analytics")}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Loan Value</CardTitle>
-            <LineChart className="h-4 w-4 text-violet-400" />
+            <LineChart className="h-4 w-4 text-purple-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${formattedLoanValue}</div>
@@ -159,7 +159,7 @@ export function Dashboard() {
           <CardContent>
             <div className="text-2xl font-bold text-destructive">{highRiskFlags}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-              <ArrowDownRight className="h-3 w-3 text-rose-400" />
+              <ArrowDownRight className="h-3 w-3 text-red-400" />
               Requires immediate attention
             </p>
           </CardContent>
@@ -173,7 +173,7 @@ export function Dashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{reportsGenerated}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-              <Activity className="h-3 w-3" />
+              <Activity className="h-3 w-3 text-emerald-400" />
               Last generated 34 min ago
             </p>
           </CardContent>
@@ -188,7 +188,7 @@ export function Dashboard() {
         <Card className="lg:col-span-2">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <Activity className="h-4 w-4 text-violet-400" /> Recent Activity
+              <Activity className="h-4 w-4 text-purple-400" /> Recent Activity
             </CardTitle>
             <CardDescription className="text-xs">Platform events across all modules</CardDescription>
           </CardHeader>
@@ -205,8 +205,8 @@ export function Dashboard() {
                 <div className="flex flex-col items-end gap-1 shrink-0">
                   <span className="text-[10px] text-muted-foreground whitespace-nowrap">{ev.time}</span>
                   {ev.status === "success" && <CheckCircle2 className="h-3 w-3 text-emerald-400" />}
-                  {ev.status === "warning" && <AlertTriangle className="h-3 w-3 text-amber-400" />}
-                  {ev.status === "running" && <RefreshCw className="h-3 w-3 text-sky-400 animate-spin" />}
+                  {ev.status === "warning" && <AlertTriangle className="h-3 w-3 text-red-400" />}
+                  {ev.status === "running" && <RefreshCw className="h-3 w-3 text-purple-400 animate-spin" />}
                   {ev.status === "pending" && <Clock className="h-3 w-3 text-muted-foreground" />}
                 </div>
               </div>
@@ -221,7 +221,7 @@ export function Dashboard() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-                <ShieldAlert className="h-4 w-4 text-rose-400" /> Active Risk Alerts
+                <ShieldAlert className="h-4 w-4 text-red-400" /> Active Risk Alerts
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -232,7 +232,7 @@ export function Dashboard() {
                 >
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-xs font-semibold">{a.company}</p>
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${a.severity === "critical" ? "bg-rose-500/20 text-rose-400" : "bg-amber-500/20 text-amber-400"}`}>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${a.severity === "critical" ? "bg-red-500/20 text-red-400 border border-red-500/30" : "bg-purple-500/20 text-purple-300 border border-purple-500/30"}`}>
                       Score {a.score}
                     </span>
                   </div>
@@ -252,14 +252,14 @@ export function Dashboard() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-                <Cpu className="h-4 w-4 text-sky-400" /> System Health
+                <Cpu className="h-4 w-4 text-purple-400" /> System Health
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-1.5">
               {systemStatus.map((s) => (
                 <div key={s.name} className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">{s.name}</span>
-                  <span className={`flex items-center gap-1 font-medium ${s.ok ? "text-emerald-400" : "text-rose-400"}`}>
+                  <span className={`flex items-center gap-1 font-medium ${s.ok ? "text-emerald-400" : "text-red-400"}`}>
                     <CircleDot className="h-3 w-3" />
                     {s.ok ? "Operational" : "Degraded"}
                   </span>
@@ -277,7 +277,7 @@ export function Dashboard() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <Zap className="h-4 w-4 text-amber-400" /> AI Processing Queue
+              <Zap className="h-4 w-4 text-purple-400" /> AI Processing Queue
             </CardTitle>
             <CardDescription className="text-xs">Active inference jobs across all modules</CardDescription>
           </CardHeader>
@@ -307,7 +307,7 @@ export function Dashboard() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <Briefcase className="h-4 w-4 text-violet-400" /> Upcoming Tasks
+              <Briefcase className="h-4 w-4 text-purple-400" /> Upcoming Tasks
             </CardTitle>
             <CardDescription className="text-xs">Scheduled reviews and compliance deadlines</CardDescription>
           </CardHeader>

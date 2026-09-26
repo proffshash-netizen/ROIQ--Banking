@@ -16,9 +16,9 @@ export const CreditDecisionWidget: React.FC<CreditDecisionWidgetProps> = ({ data
       case "APPROVE":
         return <CheckCircle className="h-9 w-9 text-emerald-400" />;
       case "APPROVE WITH CONDITIONS":
-        return <AlertTriangle className="h-9 w-9 text-amber-400" />;
+        return <AlertTriangle className="h-9 w-9 text-purple-400" />;
       case "FURTHER REVIEW":
-        return <HelpCircle className="h-9 w-9 text-blue-400" />;
+        return <HelpCircle className="h-9 w-9 text-purple-300" />;
       case "REJECT":
         return <XCircle className="h-9 w-9 text-red-400" />;
     }
@@ -29,9 +29,9 @@ export const CreditDecisionWidget: React.FC<CreditDecisionWidgetProps> = ({ data
       case "APPROVE":
         return "border-emerald-500/30 bg-emerald-500/10 text-emerald-400";
       case "APPROVE WITH CONDITIONS":
-        return "border-amber-500/30 bg-amber-500/10 text-amber-400";
+        return "border-purple-500/30 bg-purple-500/10 text-purple-400";
       case "FURTHER REVIEW":
-        return "border-blue-500/30 bg-blue-500/10 text-blue-400";
+        return "border-purple-500/30 bg-purple-500/10 text-purple-300";
       case "REJECT":
         return "border-red-500/30 bg-red-500/10 text-red-400";
     }
@@ -99,7 +99,7 @@ export const CreditDecisionWidget: React.FC<CreditDecisionWidgetProps> = ({ data
         {/* Suggested Collateral Requirement */}
         <div className="rounded-lg border border-border/60 bg-muted/20 p-4 space-y-1">
           <div className="flex items-center gap-2 text-muted-foreground">
-            <ShieldCheck className="h-4 w-4 text-blue-400" />
+            <ShieldCheck className="h-4 w-4 text-purple-400" />
             <span className="text-xs font-semibold uppercase tracking-wider">Collateral Requirement</span>
           </div>
           <div className="text-base font-bold text-foreground pt-1">{data.suggestedCollateralRequirement}</div>
@@ -119,9 +119,9 @@ export const CreditDecisionWidget: React.FC<CreditDecisionWidgetProps> = ({ data
 
       {/* Triggered Deterministic Business Rule Box */}
       <div className="rounded-lg border border-border/60 bg-muted/30 p-3.5 flex items-start gap-3">
-        <Terminal className="h-4 w-4 text-cyan-400 mt-0.5 shrink-0" />
+        <Terminal className="h-4 w-4 text-purple-400 mt-0.5 shrink-0" />
         <div className="space-y-0.5">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400">Triggered Business Logic Rule</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400">Triggered Business Logic Rule</span>
           <p className="text-xs font-mono text-foreground">{data.triggeredRule}</p>
         </div>
       </div>

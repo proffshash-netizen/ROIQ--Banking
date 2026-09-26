@@ -11,28 +11,28 @@ export function getRiskBadgeVariant(level: RiskLevel | string): string {
       return "bg-emerald-500/15 text-emerald-400 border-emerald-500/30";
     case "Medium":
     case "Moderate":
-      return "bg-amber-500/15 text-amber-400 border-amber-500/30";
+      return "bg-purple-500/15 text-purple-400 border-purple-500/30";
     case "High":
     case "Critical":
       return "bg-red-500/15 text-red-400 border-red-500/30";
     default:
-      return "bg-zinc-500/15 text-zinc-400 border-zinc-500/30";
+      return "bg-purple-950/40 text-purple-200/70 border-purple-500/20";
   }
 }
 
 export function getRiskColor(level: RiskLevel | string): string {
   switch (level) {
     case "Low":
-      return "hsl(160 60% 45%)";
+      return "hsl(142 76% 45%)";
     case "Medium":
     case "Moderate":
-      return "hsl(30 80% 55%)";
+      return "hsl(272 85% 65%)";
     case "High":
-      return "hsl(0 70% 55%)";
+      return "hsl(352 82% 54%)";
     case "Critical":
-      return "hsl(0 85% 45%)";
+      return "hsl(350 85% 42%)";
     default:
-      return "hsl(240 5% 65%)";
+      return "hsl(272 40% 70%)";
   }
 }
 
@@ -41,13 +41,13 @@ export function getDecisionBadgeVariant(decision: DecisionOutcome | string): str
     case "APPROVE":
       return "bg-emerald-500/20 text-emerald-400 border-emerald-500/40";
     case "APPROVE WITH CONDITIONS":
-      return "bg-amber-500/20 text-amber-400 border-amber-500/40";
+      return "bg-purple-500/20 text-purple-400 border-purple-500/40";
     case "FURTHER REVIEW":
-      return "bg-blue-500/20 text-blue-400 border-blue-500/40";
+      return "bg-purple-500/20 text-purple-300 border-purple-500/40";
     case "REJECT":
       return "bg-red-500/20 text-red-400 border-red-500/40";
     default:
-      return "bg-zinc-500/20 text-zinc-400 border-zinc-500/40";
+      return "bg-purple-950/40 text-purple-200/70 border-purple-500/30";
   }
 }
 
@@ -111,8 +111,8 @@ interface AISummaryProps {
 }
 
 export const AISummaryCard: React.FC<AISummaryProps> = ({ text, title = "AI Business Summary" }) => (
-  <div className="mt-3 rounded-lg bg-blue-500/5 border border-blue-500/15 p-3">
-    <div className="flex items-center gap-1.5 mb-1 text-blue-400">
+  <div className="mt-3 rounded-lg bg-purple-500/10 border border-purple-500/20 p-3">
+    <div className="flex items-center gap-1.5 mb-1 text-purple-400">
       <Sparkles className="h-3.5 w-3.5 animate-pulse" />
       <span className="text-[11px] font-bold uppercase tracking-wider">{title}</span>
     </div>

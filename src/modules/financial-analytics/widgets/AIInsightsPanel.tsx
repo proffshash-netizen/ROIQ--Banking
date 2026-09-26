@@ -13,7 +13,7 @@ export const AIInsightsPanel: React.FC<Props> = ({ data }) => {
     <Card className="col-span-1 md:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">ROIQ AI Engine Status</CardTitle>
-        <Cpu className="h-4 w-4 text-muted-foreground animate-pulse" />
+        <Cpu className="h-4 w-4 text-purple-400 animate-pulse" />
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
@@ -21,8 +21,8 @@ export const AIInsightsPanel: React.FC<Props> = ({ data }) => {
             <span className="text-xs font-semibold text-muted-foreground">AI Orchestrator</span>
             <span className="text-xs font-medium text-emerald-400">{data.engine}</span>
           </div>
-          <div className="rounded-lg bg-blue-500/5 border border-blue-500/10 p-3">
-            <p className="text-xs text-muted-foreground leading-relaxed">{data.overallInsight}</p>
+          <div className="rounded-lg bg-purple-500/10 border border-purple-500/20 p-3">
+            <p className="text-xs text-zinc-300 leading-relaxed">{data.overallInsight}</p>
           </div>
         </div>
 
@@ -44,15 +44,15 @@ export const AIInsightsPanel: React.FC<Props> = ({ data }) => {
         <div className="grid grid-cols-2 gap-3 pt-2">
           <div className="rounded-lg border border-border/50 bg-muted/30 p-2.5">
             <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1 mb-1">
-              <Server className="h-3 w-3 text-blue-400" /> LangGraph Status
+              <Server className="h-3 w-3 text-purple-400" /> LangGraph Status
             </span>
-            <span className="text-xs font-medium text-blue-400">{data.langGraphStatus}</span>
+            <span className="text-xs font-medium text-purple-400">{data.langGraphStatus}</span>
           </div>
           <div className="rounded-lg border border-border/50 bg-muted/30 p-2.5">
             <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1 mb-1">
-              <HelpCircle className="h-3 w-3 text-amber-400" /> System Backend
+              <HelpCircle className="h-3 w-3 text-emerald-400" /> System Backend
             </span>
-            <span className="text-xs font-medium text-amber-400">{data.backendStatus}</span>
+            <span className="text-xs font-medium text-emerald-400">{data.backendStatus}</span>
           </div>
         </div>
       </CardContent>

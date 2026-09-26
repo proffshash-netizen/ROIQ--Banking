@@ -13,7 +13,7 @@ export const DurationWidget: React.FC<Props> = ({ data }) => (
   <Card>
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Duration Analysis</CardTitle>
-      <Timer className="h-4 w-4 text-muted-foreground" />
+      <Timer className="h-4 w-4 text-purple-400" />
     </CardHeader>
     <CardContent>
       <div className="flex items-center justify-between mb-4">

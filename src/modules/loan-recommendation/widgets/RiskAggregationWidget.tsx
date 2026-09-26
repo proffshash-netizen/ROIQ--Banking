@@ -101,10 +101,10 @@ export const RiskAggregationWidget: React.FC<RiskAggregationWidgetProps> = ({ da
           lineStyle: {
             width: 14,
             color: [
-              [0.3, "hsl(160 60% 45%)"], // Low
-              [0.6, "hsl(30 80% 55%)"], // Medium
-              [0.8, "hsl(0 70% 55%)"], // High
-              [1.0, "hsl(0 85% 45%)"], // Critical
+              [0.3, "hsl(142 76% 45%)"], // Low (Green)
+              [0.6, "hsl(272 85% 65%)"], // Medium (Purple)
+              [0.8, "hsl(352 82% 54%)"], // High (Red)
+              [1.0, "hsl(350 85% 42%)"], // Critical (Dark Red)
             ],
           },
         },
@@ -137,7 +137,7 @@ export const RiskAggregationWidget: React.FC<RiskAggregationWidgetProps> = ({ da
         title="SECTION 2: RISK AGGREGATION ENGINE"
         subtitle="Aggregated risk synthesis across corporate, liquidity, market, and credit risk modules"
         badgeText="Analytical Aggregation"
-        icon={<ShieldAlert className="h-5 w-5 text-amber-400" />}
+        icon={<ShieldAlert className="h-5 w-5 text-purple-400" />}
       />
 
       {/* Top Aggregation Cards: Overall Score, Risk Level, Confidence */}
@@ -154,7 +154,7 @@ export const RiskAggregationWidget: React.FC<RiskAggregationWidgetProps> = ({ da
               Weighted aggregate across 6 analytical risk modules
             </p>
           </div>
-          <div className="p-3 rounded-full bg-amber-500/10 text-amber-400">
+          <div className="p-3 rounded-full bg-purple-500/10 text-purple-400">
             <Gauge className="h-7 w-7" />
           </div>
         </div>
@@ -171,7 +171,7 @@ export const RiskAggregationWidget: React.FC<RiskAggregationWidgetProps> = ({ da
               Composite credit risk classification profile
             </p>
           </div>
-          <div className="p-3 rounded-full bg-blue-500/10 text-blue-400">
+          <div className="p-3 rounded-full bg-purple-500/10 text-purple-400">
             <ShieldAlert className="h-7 w-7" />
           </div>
         </div>
@@ -198,7 +198,7 @@ export const RiskAggregationWidget: React.FC<RiskAggregationWidgetProps> = ({ da
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2">
         <div className="lg:col-span-2 rounded-xl border border-border/60 bg-muted/10 p-4">
           <div className="flex items-center gap-2 mb-2 text-sm font-semibold text-foreground">
-            <BarChart3 className="h-4 w-4 text-blue-400" />
+            <BarChart3 className="h-4 w-4 text-purple-400" />
             <span>Module Risk Score Breakdown</span>
           </div>
           <ReactECharts key={`risk-bar-${data.overallRiskScore}-${data.moduleBreakdowns.map(m => m.riskScore).join('-')}`} option={barChartOption} style={{ height: "260px", width: "100%" }} notMerge />
@@ -206,7 +206,7 @@ export const RiskAggregationWidget: React.FC<RiskAggregationWidgetProps> = ({ da
 
         <div className="rounded-xl border border-border/60 bg-muted/10 p-4 flex flex-col items-center justify-center">
           <div className="flex items-center gap-2 mb-1 text-sm font-semibold text-foreground self-start">
-            <Gauge className="h-4 w-4 text-amber-400" />
+            <Gauge className="h-4 w-4 text-purple-400" />
             <span>Overall Risk Gauge</span>
           </div>
           <ReactECharts key={`risk-gauge-${data.overallRiskScore}-${data.overallRiskLevel}`} option={gaugeChartOption} style={{ height: "210px", width: "100%" }} notMerge />

@@ -15,28 +15,28 @@ export const InterestRateChartWidget: React.FC<Props> = ({ data }) => {
   const option = {
     tooltip: {
       trigger: "axis" as const,
-      backgroundColor: "hsl(240 10% 8%)",
-      borderColor: "hsl(240 3.7% 20%)",
-      textStyle: { color: "hsl(0 0% 90%)", fontSize: 11 },
+      backgroundColor: "hsl(272 38% 8%)",
+      borderColor: "hsl(272 30% 20%)",
+      textStyle: { color: "hsl(272 20% 92%)", fontSize: 11 },
     },
     legend: {
       data: ["Policy Rate", "Market Rate", "Overnight Rate"],
       bottom: 0,
-      textStyle: { color: "hsl(240 5% 64.9%)", fontSize: 10 },
+      textStyle: { color: "hsl(272 20% 70%)", fontSize: 10 },
     },
     grid: { top: 10, right: 16, bottom: 40, left: 40, containLabel: false },
     xAxis: {
       type: "category" as const,
       data: data.historicalTrend.map((p) => p.date),
-      axisLine: { lineStyle: { color: "hsl(240 3.7% 20%)" } },
-      axisLabel: { color: "hsl(240 5% 64.9%)", fontSize: 10 },
+      axisLine: { lineStyle: { color: "hsl(272 30% 20%)" } },
+      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10 },
     },
     yAxis: {
       type: "value" as const,
       min: (v: { min: number }) => Math.floor(v.min * 10 - 1) / 10,
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: "hsl(240 3.7% 15%)", type: "dashed" as const } },
-      axisLabel: { color: "hsl(240 5% 64.9%)", fontSize: 10, formatter: "{value}%" },
+      splitLine: { lineStyle: { color: "hsl(272 30% 16%)", type: "dashed" as const } },
+      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10, formatter: "{value}%" },
     },
     series: [
       {
@@ -45,8 +45,8 @@ export const InterestRateChartWidget: React.FC<Props> = ({ data }) => {
         data: data.historicalTrend.map((p) => p.policy),
         smooth: true,
         lineStyle: { width: 2 },
-        itemStyle: { color: "hsl(220 70% 50%)" },
-        areaStyle: { color: "hsla(220 70% 50% / 0.08)" },
+        itemStyle: { color: "hsl(272 85% 65%)" },
+        areaStyle: { color: "hsla(272 85% 65% / 0.12)" },
       },
       {
         name: "Market Rate",
@@ -54,8 +54,8 @@ export const InterestRateChartWidget: React.FC<Props> = ({ data }) => {
         data: data.historicalTrend.map((p) => p.market),
         smooth: true,
         lineStyle: { width: 2 },
-        itemStyle: { color: "hsl(160 60% 45%)" },
-        areaStyle: { color: "hsla(160 60% 45% / 0.08)" },
+        itemStyle: { color: "hsl(142 76% 45%)" },
+        areaStyle: { color: "hsla(142 76% 45% / 0.12)" },
       },
       {
         name: "Overnight Rate",
@@ -63,7 +63,7 @@ export const InterestRateChartWidget: React.FC<Props> = ({ data }) => {
         data: data.historicalTrend.map((p) => p.overnight),
         smooth: true,
         lineStyle: { width: 2, type: "dashed" as const },
-        itemStyle: { color: "hsl(30 80% 55%)" },
+        itemStyle: { color: "hsl(352 82% 54%)" },
       },
     ],
     animation: true,
@@ -74,7 +74,7 @@ export const InterestRateChartWidget: React.FC<Props> = ({ data }) => {
     <Card className="col-span-1 md:col-span-2 lg:col-span-3">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Interest Rate Trends</CardTitle>
-        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+        <TrendingUp className="h-4 w-4 text-purple-400" />
       </CardHeader>
       <CardContent>
         <ReactEChartsCore key={`ir-${data.policyRate}-${data.historicalTrend.length}`} option={option} style={{ height: 260 }} notMerge />

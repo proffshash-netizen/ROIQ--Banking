@@ -27,9 +27,9 @@ export const ExecutiveReportPreviewWidget: React.FC<ExecutiveReportPreviewWidget
       case "APPROVE":
         return "bg-emerald-500/15 text-emerald-400 border-emerald-500/40 print:bg-emerald-50 print:text-emerald-800 print:border-emerald-300";
       case "APPROVE WITH CONDITIONS":
-        return "bg-amber-500/15 text-amber-400 border-amber-500/40 print:bg-amber-50 print:text-amber-900 print:border-amber-300";
+        return "bg-purple-500/15 text-purple-400 border-purple-500/40 print:bg-purple-50 print:text-purple-900 print:border-purple-300";
       case "FURTHER REVIEW":
-        return "bg-blue-500/15 text-blue-400 border-blue-500/40 print:bg-blue-50 print:text-blue-900 print:border-blue-300";
+        return "bg-purple-500/15 text-purple-400 border-purple-500/40 print:bg-purple-50 print:text-purple-900 print:border-purple-300";
       case "REJECT":
         return "bg-red-500/15 text-red-400 border-red-500/40 print:bg-red-50 print:text-red-900 print:border-red-300";
     }
@@ -40,9 +40,9 @@ export const ExecutiveReportPreviewWidget: React.FC<ExecutiveReportPreviewWidget
       case "APPROVE":
         return <CheckCircle2 className="h-7 w-7 text-emerald-400 print:text-emerald-700 shrink-0" />;
       case "APPROVE WITH CONDITIONS":
-        return <AlertTriangle className="h-7 w-7 text-amber-400 print:text-amber-700 shrink-0" />;
+        return <AlertTriangle className="h-7 w-7 text-purple-400 print:text-purple-700 shrink-0" />;
       case "FURTHER REVIEW":
-        return <HelpCircle className="h-7 w-7 text-blue-400 print:text-blue-700 shrink-0" />;
+        return <HelpCircle className="h-7 w-7 text-purple-400 print:text-purple-700 shrink-0" />;
       case "REJECT":
         return <XCircle className="h-7 w-7 text-red-400 print:text-red-700 shrink-0" />;
     }
@@ -184,8 +184,8 @@ export const ExecutiveReportPreviewWidget: React.FC<ExecutiveReportPreviewWidget
             <span className="font-semibold text-foreground print:text-zinc-900">{data.marketFXRiskSummary.tailRisk}</span>
           </div>
         </div>
-        <div className="bg-amber-500/5 border border-amber-500/15 p-3 rounded-lg text-sm text-muted-foreground print:bg-amber-50 print:border-amber-200 print:text-zinc-800">
-          <strong className="text-amber-400 print:text-amber-800">Market Risk Conclusion:</strong> {data.marketFXRiskSummary.overallMarketRiskConclusion}
+        <div className="bg-purple-500/10 border border-purple-500/20 p-3 rounded-lg text-sm text-muted-foreground print:bg-purple-50 print:border-purple-200 print:text-zinc-800">
+          <strong className="text-purple-400 print:text-purple-800">Market Risk Conclusion:</strong> {data.marketFXRiskSummary.overallMarketRiskConclusion}
         </div>
       </section>
 

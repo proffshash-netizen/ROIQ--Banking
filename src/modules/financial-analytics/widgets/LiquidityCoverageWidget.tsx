@@ -25,9 +25,9 @@ export const LiquidityCoverageWidget: React.FC<Props> = ({ data }) => {
           lineStyle: {
             width: 8,
             color: [
-              [0.5, "hsl(346 84% 61%)"], // < 100% Critical
-              [0.7, "hsl(43 96% 56%)"],  // Warning buffer
-              [1, "hsl(142 71% 45%)"],   // Strong compliant
+              [0.5, "hsl(352 82% 54%)"], // < 100% Critical Red
+              [0.7, "hsl(272 85% 65%)"],  // Warning buffer Purple
+              [1, "hsl(142 76% 45%)"],   // Strong compliant Green
             ],
           },
         },
@@ -37,7 +37,7 @@ export const LiquidityCoverageWidget: React.FC<Props> = ({ data }) => {
           width: 4,
           offsetCenter: [0, 5],
           itemStyle: {
-            color: "hsl(240 5% 64.9%)",
+            color: "hsl(272 20% 70%)",
           },
         },
         axisTick: { show: false },
@@ -60,7 +60,7 @@ export const LiquidityCoverageWidget: React.FC<Props> = ({ data }) => {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Liquidity Coverage Ratio (LCR)</CardTitle>
-        <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+        <ShieldCheck className="h-4 w-4 text-emerald-400" />
       </CardHeader>
       <CardContent>
         <div className="flex justify-center" style={{ height: 120 }}>

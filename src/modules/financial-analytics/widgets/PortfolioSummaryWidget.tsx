@@ -17,9 +17,9 @@ export const PortfolioSummaryWidget: React.FC<Props> = ({ data }) => {
   const option = {
     tooltip: {
       trigger: "item" as const,
-      backgroundColor: "hsl(240 10% 8%)",
-      borderColor: "hsl(240 3.7% 20%)",
-      textStyle: { color: "hsl(0 0% 90%)", fontSize: 11 },
+      backgroundColor: "hsl(272 38% 8%)",
+      borderColor: "hsl(272 30% 20%)",
+      textStyle: { color: "hsl(272 20% 92%)", fontSize: 11 },
       formatter: (params: { name: string; value: number; percent: number }) => {
         return `<strong>${params.name}</strong><br/>Value: ${formatCurrency(params.value)} (${params.percent.toFixed(1)}%)`;
       },
@@ -33,7 +33,7 @@ export const PortfolioSummaryWidget: React.FC<Props> = ({ data }) => {
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 4,
-          borderColor: "hsl(240 10% 3.9%)",
+          borderColor: "hsl(272 38% 6%)",
           borderWidth: 2,
         },
         label: { show: false },
@@ -48,12 +48,12 @@ export const PortfolioSummaryWidget: React.FC<Props> = ({ data }) => {
         labelLine: { show: false },
         data: filteredAllocation,
         color: [
-          "hsl(220 70% 50%)",
-          "hsl(160 60% 45%)",
-          "hsl(30 80% 55%)",
-          "hsl(280 65% 60%)",
-          "hsl(340 75% 55%)",
-          "hsl(200 80% 50%)",
+          "hsl(272 85% 65%)",
+          "hsl(142 76% 45%)",
+          "hsl(352 82% 54%)",
+          "hsl(285 85% 72%)",
+          "hsl(158 80% 36%)",
+          "hsl(348 85% 42%)",
         ],
       },
     ],
@@ -63,7 +63,7 @@ export const PortfolioSummaryWidget: React.FC<Props> = ({ data }) => {
     <Card className="col-span-1 md:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Asset Allocation</CardTitle>
-        <PieChart className="h-4 w-4 text-muted-foreground" />
+        <PieChart className="h-4 w-4 text-purple-400" />
       </CardHeader>
       <CardContent className="flex flex-col justify-between h-[calc(100%-48px)]">
         <div className="flex items-center gap-4">

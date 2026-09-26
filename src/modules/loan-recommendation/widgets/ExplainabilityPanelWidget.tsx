@@ -68,15 +68,15 @@ export const ExplainabilityPanelWidget: React.FC<ExplainabilityPanelWidgetProps>
       {/* Grid: Primary Risk Drivers & Mitigation Strategies */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Primary Risk Drivers */}
-        <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-3">
-          <div className="flex items-center gap-2 text-amber-400 font-semibold text-xs uppercase tracking-wider">
+        <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 space-y-3">
+          <div className="flex items-center gap-2 text-red-400 font-semibold text-xs uppercase tracking-wider">
             <AlertOctagon className="h-4 w-4" />
             <span>Primary Risk Drivers</span>
           </div>
           <ul className="space-y-2 text-xs text-muted-foreground">
             {data.primaryRiskDrivers.map((item, idx) => (
               <li key={idx} className="flex items-start gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />
+                <span className="h-1.5 w-1.5 rounded-full bg-red-400 mt-1.5 shrink-0" />
                 <span className="text-foreground/90 font-medium">{item}</span>
               </li>
             ))}
@@ -84,15 +84,15 @@ export const ExplainabilityPanelWidget: React.FC<ExplainabilityPanelWidgetProps>
         </div>
 
         {/* Mitigation Strategies */}
-        <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 space-y-3">
-          <div className="flex items-center gap-2 text-blue-400 font-semibold text-xs uppercase tracking-wider">
+        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 space-y-3">
+          <div className="flex items-center gap-2 text-emerald-400 font-semibold text-xs uppercase tracking-wider">
             <ShieldCheck className="h-4 w-4" />
             <span>Mitigation Strategies</span>
           </div>
           <ul className="space-y-2 text-xs text-muted-foreground">
             {data.mitigationStrategies.map((item, idx) => (
               <li key={idx} className="flex items-start gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
                 <span className="text-foreground/90">{item}</span>
               </li>
             ))}
@@ -120,14 +120,14 @@ export const ExplainabilityPanelWidget: React.FC<ExplainabilityPanelWidgetProps>
 
         {/* Required Documentation */}
         <div className="rounded-xl border border-border/60 bg-muted/10 p-4 space-y-2.5">
-          <div className="flex items-center gap-2 text-cyan-400 font-semibold text-xs uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-purple-300 font-semibold text-xs uppercase tracking-wider">
             <ClipboardList className="h-4 w-4" />
             <span>Required Documentation</span>
           </div>
           <ul className="space-y-2 text-[11px] text-muted-foreground">
             {data.requiredDocumentation.map((item, idx) => (
               <li key={idx} className="flex items-start gap-1.5">
-                <span className="text-cyan-400 font-bold">•</span>
+                <span className="text-purple-400 font-bold">•</span>
                 <span className="text-foreground/80">{item}</span>
               </li>
             ))}
@@ -136,14 +136,14 @@ export const ExplainabilityPanelWidget: React.FC<ExplainabilityPanelWidgetProps>
 
         {/* Post-Approval Monitoring */}
         <div className="rounded-xl border border-border/60 bg-muted/10 p-4 space-y-2.5">
-          <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-emerald-400 font-semibold text-xs uppercase tracking-wider">
             <Activity className="h-4 w-4" />
             <span>Post-Approval Monitoring</span>
           </div>
           <ul className="space-y-2 text-[11px] text-muted-foreground">
             {data.postApprovalMonitoring.map((item, idx) => (
               <li key={idx} className="flex items-start gap-1.5">
-                <span className="text-indigo-400 font-bold">•</span>
+                <span className="text-emerald-400 font-bold">•</span>
                 <span className="text-foreground/80">{item}</span>
               </li>
             ))}
@@ -152,12 +152,12 @@ export const ExplainabilityPanelWidget: React.FC<ExplainabilityPanelWidgetProps>
       </div>
 
       {/* Business Justification Callout Box */}
-      <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-5 space-y-2">
-        <div className="flex items-center gap-2 text-blue-400 font-bold text-xs uppercase tracking-wider">
+      <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 p-5 space-y-2">
+        <div className="flex items-center gap-2 text-purple-400 font-bold text-xs uppercase tracking-wider">
           <Quote className="h-4 w-4" />
           <span>Executive Business Justification</span>
         </div>
-        <blockquote className="text-sm font-medium text-foreground italic leading-relaxed pl-2 border-l-2 border-blue-400">
+        <blockquote className="text-sm font-medium text-foreground italic leading-relaxed pl-2 border-l-2 border-purple-400">
           "{data.businessJustification}"
         </blockquote>
       </div>

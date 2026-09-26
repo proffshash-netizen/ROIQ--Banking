@@ -9,24 +9,24 @@ import { useCompaniesStore } from "@/stores/companiesStore"
 import { cn } from "@/lib/utils"
 
 const riskMeta: Record<string, { label: string; color: string; bg: string }> = {
-  low:      { label: "Low",      color: "text-emerald-400", bg: "bg-emerald-400/10 text-emerald-400" },
-  medium:   { label: "Medium",   color: "text-amber-400",   bg: "bg-amber-400/10   text-amber-400"   },
-  high:     { label: "High",     color: "text-orange-400",  bg: "bg-orange-400/10  text-orange-400"  },
-  critical: { label: "Critical", color: "text-rose-400",    bg: "bg-rose-400/10    text-rose-400"    },
+  low:      { label: "Low",      color: "text-emerald-400", bg: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" },
+  medium:   { label: "Medium",   color: "text-purple-400",  bg: "bg-purple-500/10  text-purple-400  border border-purple-500/20" },
+  high:     { label: "High",     color: "text-red-400",     bg: "bg-red-500/10     text-red-400     border border-red-500/20" },
+  critical: { label: "Critical", color: "text-red-400",     bg: "bg-red-500/20     text-red-400     border border-red-500/30" },
 }
 
 const statusMeta: Record<string, { label: string; icon: React.ElementType; color: string }> = {
-  processing: { label: "Processing", icon: RefreshCw,     color: "text-sky-400"     },
+  processing: { label: "Processing", icon: RefreshCw,     color: "text-purple-400"  },
   completed:  { label: "Completed",  icon: CheckCircle2,  color: "text-emerald-400" },
-  flagged:    { label: "Flagged",    icon: AlertTriangle, color: "text-rose-400"    },
-  pending:    { label: "Queued",     icon: Clock,         color: "text-muted-foreground" },
+  flagged:    { label: "Flagged",    icon: AlertTriangle, color: "text-red-400"     },
+  pending:    { label: "Queued",     icon: Clock,         color: "text-purple-300/70" },
 }
 
 const stats = [
-  { label: "Total Companies",   value: "9",       icon: Building2,   color: "text-blue-400"    },
-  { label: "Avg. Credit Score", value: "68.1",    icon: BarChart3,   color: "text-violet-400"  },
+  { label: "Total Companies",   value: "9",       icon: Building2,   color: "text-purple-400"  },
+  { label: "Avg. Credit Score", value: "68.1",    icon: BarChart3,   color: "text-purple-300"  },
   { label: "Total Exposure",    value: "$4.53 B", icon: Globe,       color: "text-emerald-400" },
-  { label: "Active Processing", value: "3",       icon: Cpu,         color: "text-amber-400"   },
+  { label: "Active Processing", value: "3",       icon: Cpu,         color: "text-purple-400"  },
 ]
 
 export function Companies() {
@@ -129,7 +129,7 @@ export function Companies() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base font-semibold">
-            <Building2 className="h-4 w-4 text-blue-400" /> Corporate Portfolio
+            <Building2 className="h-4 w-4 text-purple-400" /> Corporate Portfolio
           </CardTitle>
           <CardDescription className="text-xs">Click any row to view detailed profile</CardDescription>
         </CardHeader>
@@ -183,12 +183,12 @@ export function Companies() {
                         <td className="py-3 px-4 text-xs text-muted-foreground hidden lg:table-cell">{c.revenue}</td>
                         <td className="py-3 px-4 text-center">
                           <div className="flex flex-col items-center gap-1">
-                            <span className={`text-sm font-bold ${c.creditScore >= 75 ? "text-emerald-400" : c.creditScore >= 55 ? "text-amber-400" : "text-rose-400"}`}>
+                            <span className={`text-sm font-bold ${c.creditScore >= 75 ? "text-emerald-400" : c.creditScore >= 55 ? "text-purple-400" : "text-red-400"}`}>
                               {c.creditScore}
                             </span>
                             <div className="h-1 w-14 rounded-full bg-muted/30 overflow-hidden">
                               <div
-                                className={`h-full rounded-full ${c.creditScore >= 75 ? "bg-emerald-400" : c.creditScore >= 55 ? "bg-amber-400" : "bg-rose-400"}`}
+                                className={`h-full rounded-full ${c.creditScore >= 75 ? "bg-emerald-400" : c.creditScore >= 55 ? "bg-purple-400" : "bg-red-400"}`}
                                 style={{ width: `${c.creditScore}%` }}
                               />
                             </div>
@@ -227,7 +227,7 @@ export function Companies() {
                                 <div className="space-y-1 text-xs">
                                   <div className="flex justify-between"><span className="text-muted-foreground">Revenue</span><span className="font-medium">{c.revenue}</span></div>
                                   <div className="flex justify-between"><span className="text-muted-foreground">Loan Exposure</span><span className="font-semibold text-emerald-400">{c.loanExposure}</span></div>
-                                  <div className="flex justify-between"><span className="text-muted-foreground">Credit Score</span><span className={`font-bold ${c.creditScore >= 75 ? "text-emerald-400" : c.creditScore >= 55 ? "text-amber-400" : "text-rose-400"}`}>{c.creditScore} / 100</span></div>
+                                  <div className="flex justify-between"><span className="text-muted-foreground">Credit Score</span><span className={`font-bold ${c.creditScore >= 75 ? "text-emerald-400" : c.creditScore >= 55 ? "text-purple-400" : "text-red-400"}`}>{c.creditScore} / 100</span></div>
                                 </div>
                               </div>
                               <div className="space-y-2">

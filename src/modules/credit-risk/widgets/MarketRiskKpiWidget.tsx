@@ -14,7 +14,7 @@ export const MarketRiskKpiWidget: React.FC<Props> = ({ data }) => (
     <SectionHeader
       title="Market Risk Analysis"
       subtitle={`Company: ${data.companyId} · ${data.instrumentCount} instruments tracked`}
-      icon={<BarChart3 className="h-5 w-5 text-blue-400" />}
+      icon={<BarChart3 className="h-5 w-5 text-purple-400" />}
     />
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
       {data.kpis.map((kpi) => (

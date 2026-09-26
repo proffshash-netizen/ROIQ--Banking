@@ -145,11 +145,11 @@ export function AIInsights() {
       case "positive":
         return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
       case "warning":
-        return "bg-amber-500/10 text-amber-400 border-amber-500/20"
+        return "bg-purple-500/10 text-purple-400 border-purple-500/20"
       case "critical":
-        return "bg-rose-500/10 text-rose-400 border-rose-500/20"
+        return "bg-red-500/10 text-red-400 border-red-500/20"
       default:
-        return "bg-sky-500/10 text-sky-400 border-sky-500/20"
+        return "bg-purple-500/10 text-purple-400 border-purple-500/20"
     }
   }
 
@@ -225,8 +225,8 @@ export function AIInsights() {
                 activeCompany?.riskLevel === "low"
                   ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                   : activeCompany?.riskLevel === "medium"
-                  ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                  : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                  ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
+                  : "bg-red-500/10 text-red-400 border-red-500/20"
               }`}>
                 {activeCompany?.riskLevel} RISK
               </span>
@@ -254,7 +254,7 @@ export function AIInsights() {
               <div className="p-3 rounded-lg bg-muted/20 border border-border/30">
                 <span className="text-[11px] text-muted-foreground">Human Review Status</span>
                 <p className={`text-xl font-bold mt-1 capitalize ${
-                  insights?.human_review_required ? "text-amber-400" : "text-emerald-400"
+                  insights?.human_review_required ? "text-purple-400" : "text-emerald-400"
                 }`}>
                   {insights?.human_review_required ? "Required" : "Automated"}
                 </p>
@@ -284,7 +284,7 @@ export function AIInsights() {
             <div className="space-y-2">
               {insights?.review_prompts?.map((prompt, i) => (
                 <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
-                  <BadgeAlert className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+                  <BadgeAlert className="h-4 w-4 text-purple-400 shrink-0 mt-0.5" />
                   <span>{prompt}</span>
                 </div>
               )) || (
@@ -320,9 +320,9 @@ export function AIInsights() {
       {/* 4 Distinct Section Cards: FACT, CALCULATED METRIC, AI INTERPRETATION, RECOMMENDATION */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* 1. FACTS */}
-        <Card className="border-sky-500/20">
+        <Card className="border-purple-500/25">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2 text-sky-400">
+            <CardTitle className="text-base flex items-center gap-2 text-purple-400">
               <FileCheck2 className="h-4 w-4" /> 1. Verified Corporate Facts
             </CardTitle>
             <CardDescription className="text-xs">
@@ -331,9 +331,9 @@ export function AIInsights() {
           </CardHeader>
           <CardContent className="space-y-3">
             {insights?.facts?.map((f, idx) => (
-              <div key={idx} className="p-3 rounded-lg bg-sky-500/5 border border-sky-500/10">
+              <div key={idx} className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-sky-300">{f.title}</span>
+                  <span className="text-xs font-semibold text-purple-300">{f.title}</span>
                   <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${getSeverityBadge(f.severity)}`}>
                     {f.category}
                   </span>
@@ -370,9 +370,9 @@ export function AIInsights() {
         </Card>
 
         {/* 3. AI INTERPRETATION */}
-        <Card className="border-indigo-500/20">
+        <Card className="border-purple-500/25">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2 text-indigo-400">
+            <CardTitle className="text-base flex items-center gap-2 text-purple-400">
               <BrainCircuit className="h-4 w-4" /> 3. Explainable AI Risk Interpretation
             </CardTitle>
             <CardDescription className="text-xs">
@@ -381,9 +381,9 @@ export function AIInsights() {
           </CardHeader>
           <CardContent className="space-y-3">
             {insights?.ai_interpretations?.map((ai, idx) => (
-              <div key={idx} className="p-3 rounded-lg bg-indigo-500/5 border border-indigo-500/10">
+              <div key={idx} className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-indigo-300">{ai.title}</span>
+                  <span className="text-xs font-semibold text-purple-300">{ai.title}</span>
                   <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${getSeverityBadge(ai.severity)}`}>
                     {ai.category}
                   </span>

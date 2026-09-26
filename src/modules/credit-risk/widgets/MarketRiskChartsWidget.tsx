@@ -16,9 +16,9 @@ export const MarketRiskChartsWidget: React.FC<Props> = ({ data }) => {
   const donutOption = {
     tooltip: {
       trigger: "item" as const,
-      backgroundColor: "hsl(240 10% 8%)",
-      borderColor: "hsl(240 3.7% 20%)",
-      textStyle: { color: "hsl(0 0% 90%)", fontSize: 11 },
+      backgroundColor: "hsl(272 32% 10%)",
+      borderColor: "hsl(272 30% 20%)",
+      textStyle: { color: "hsl(270 20% 95%)", fontSize: 11 },
       formatter: (p: { name: string; value: number; percent: number }) =>
         `${p.name}: ${formatCurrency(p.value)} (${p.percent.toFixed(1)}%)`,
     },
@@ -28,16 +28,16 @@ export const MarketRiskChartsWidget: React.FC<Props> = ({ data }) => {
         radius: ["50%", "78%"],
         center: ["50%", "50%"],
         avoidLabelOverlap: true,
-        itemStyle: { borderRadius: 4, borderColor: "hsl(240 10% 3.9%)", borderWidth: 2 },
+        itemStyle: { borderRadius: 4, borderColor: "hsl(272 38% 6%)", borderWidth: 2 },
         label: {
           show: true,
-          color: "hsl(240 5% 64.9%)",
+          color: "hsl(272 15% 68%)",
           fontSize: 10,
           formatter: "{b}: {d}%",
         },
         data: [
-          { value: data.exposureBreakdown.hedged, name: "Hedged", itemStyle: { color: "hsl(160 60% 45%)" } },
-          { value: data.exposureBreakdown.unhedged, name: "Unhedged", itemStyle: { color: "hsl(0 70% 55%)" } },
+          { value: data.exposureBreakdown.hedged, name: "Hedged", itemStyle: { color: "hsl(142 76% 45%)" } },
+          { value: data.exposureBreakdown.unhedged, name: "Unhedged", itemStyle: { color: "hsl(352 82% 54%)" } },
         ],
       },
     ],

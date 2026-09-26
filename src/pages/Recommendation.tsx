@@ -49,11 +49,10 @@ export function Recommendation() {
         <span className="text-xs text-muted-foreground">·</span>
         <span className="text-xs text-muted-foreground">Exposure: <span className="font-bold text-foreground">{activeCompany.loanExposure}</span></span>
         <span className="text-xs text-muted-foreground">·</span>
-        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-          activeCompany.riskLevel === "low" ? "bg-emerald-400/10 text-emerald-400" :
-          activeCompany.riskLevel === "medium" ? "bg-amber-400/10 text-amber-400" :
-          activeCompany.riskLevel === "high" ? "bg-orange-400/10 text-orange-400" :
-          "bg-rose-400/10 text-rose-400"
+        <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${
+          activeCompany.riskLevel === "low" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+          activeCompany.riskLevel === "medium" ? "bg-purple-500/10 text-purple-400 border-purple-500/20" :
+          "bg-red-500/10 text-red-400 border-red-500/20"
         }`}>{activeCompany.riskLevel.toUpperCase()} RISK</span>
       </div>
 

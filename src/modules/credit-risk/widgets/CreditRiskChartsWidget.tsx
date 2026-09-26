@@ -15,27 +15,27 @@ export const CreditRiskChartsWidget: React.FC<Props> = ({ data }) => {
   const debtRatiosOption = {
     tooltip: {
       trigger: "axis" as const,
-      backgroundColor: "hsl(240 10% 8%)",
-      borderColor: "hsl(240 3.7% 20%)",
-      textStyle: { color: "hsl(0 0% 90%)", fontSize: 11 },
+      backgroundColor: "hsl(272 32% 10%)",
+      borderColor: "hsl(272 30% 20%)",
+      textStyle: { color: "hsl(270 20% 95%)", fontSize: 11 },
     },
     legend: {
       data: ["Actual", "Threshold"],
       bottom: 0,
-      textStyle: { color: "hsl(240 5% 64.9%)", fontSize: 10 },
+      textStyle: { color: "hsl(272 15% 68%)", fontSize: 10 },
     },
     grid: { top: 20, right: 30, bottom: 40, left: 50, containLabel: false },
     xAxis: {
       type: "category" as const,
       data: data.debtRatios.map((r) => r.name),
-      axisLine: { lineStyle: { color: "hsl(240 3.7% 20%)" } },
-      axisLabel: { color: "hsl(240 5% 64.9%)", fontSize: 10 },
+      axisLine: { lineStyle: { color: "hsl(272 30% 20%)" } },
+      axisLabel: { color: "hsl(272 15% 68%)", fontSize: 10 },
     },
     yAxis: {
       type: "value" as const,
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: "hsl(240 3.7% 15%)", type: "dashed" as const } },
-      axisLabel: { color: "hsl(240 5% 64.9%)", fontSize: 10 },
+      splitLine: { lineStyle: { color: "hsl(272 25% 15%)", type: "dashed" as const } },
+      axisLabel: { color: "hsl(272 15% 68%)", fontSize: 10 },
     },
     series: [
       {
@@ -44,7 +44,7 @@ export const CreditRiskChartsWidget: React.FC<Props> = ({ data }) => {
         data: data.debtRatios.map((r) => ({
           value: r.value,
           itemStyle: {
-            color: r.value > r.threshold ? "hsl(0 70% 55%)" : "hsl(160 60% 45%)",
+            color: r.value > r.threshold ? "hsl(352 82% 54%)" : "hsl(142 76% 45%)",
             borderRadius: [4, 4, 0, 0],
           },
         })),
@@ -54,7 +54,7 @@ export const CreditRiskChartsWidget: React.FC<Props> = ({ data }) => {
         name: "Threshold",
         type: "bar",
         data: data.debtRatios.map((r) => r.threshold),
-        itemStyle: { color: "hsl(240 5% 30%)", borderRadius: [4, 4, 0, 0] },
+        itemStyle: { color: "hsl(272 40% 32%)", borderRadius: [4, 4, 0, 0] },
         barWidth: 28,
       },
     ],

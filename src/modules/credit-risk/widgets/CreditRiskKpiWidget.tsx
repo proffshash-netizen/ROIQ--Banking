@@ -14,7 +14,7 @@ export const CreditRiskKpiWidget: React.FC<Props> = ({ data }) => (
     <SectionHeader
       title="Credit Risk Assessment"
       subtitle={`Credit Rating: ${data.creditRating} · Risk Category: ${data.riskCategory}`}
-      icon={<CreditCard className="h-5 w-5 text-amber-400" />}
+      icon={<CreditCard className="h-5 w-5 text-purple-400" />}
     />
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
       {data.kpis.map((kpi) => (

@@ -24,7 +24,7 @@ export const LoanRequestSummaryWidget: React.FC<LoanRequestSummaryWidgetProps> =
         {/* Card 1: Company Name */}
         <div className="rounded-lg border border-border/60 bg-muted/20 p-3.5 flex flex-col justify-between">
           <div className="flex items-center gap-2 text-muted-foreground mb-2">
-            <Building2 className="h-4 w-4 text-blue-400" />
+            <Building2 className="h-4 w-4 text-purple-400" />
             <span className="text-xs font-medium">Company Name</span>
           </div>
           <div>
@@ -50,7 +50,7 @@ export const LoanRequestSummaryWidget: React.FC<LoanRequestSummaryWidgetProps> =
         {/* Card 3: Loan Purpose */}
         <div className="rounded-lg border border-border/60 bg-muted/20 p-3.5 flex flex-col justify-between">
           <div className="flex items-center gap-2 text-muted-foreground mb-2">
-            <FileText className="h-4 w-4 text-amber-400" />
+            <FileText className="h-4 w-4 text-purple-400" />
             <span className="text-xs font-medium">Loan Purpose</span>
           </div>
           <div>
@@ -76,7 +76,7 @@ export const LoanRequestSummaryWidget: React.FC<LoanRequestSummaryWidgetProps> =
         {/* Card 5: Requested Product Type */}
         <div className="rounded-lg border border-border/60 bg-muted/20 p-3.5 flex flex-col justify-between">
           <div className="flex items-center gap-2 text-muted-foreground mb-2">
-            <Tag className="h-4 w-4 text-cyan-400" />
+            <Tag className="h-4 w-4 text-purple-400" />
             <span className="text-xs font-medium">Product Type</span>
           </div>
           <div>
@@ -90,7 +90,7 @@ export const LoanRequestSummaryWidget: React.FC<LoanRequestSummaryWidgetProps> =
         {/* Card 6: Requested Date */}
         <div className="rounded-lg border border-border/60 bg-muted/20 p-3.5 flex flex-col justify-between">
           <div className="flex items-center gap-2 text-muted-foreground mb-2">
-            <Calendar className="h-4 w-4 text-indigo-400" />
+            <Calendar className="h-4 w-4 text-purple-400" />
             <span className="text-xs font-medium">Requested Date</span>
           </div>
           <div>

@@ -1051,7 +1051,7 @@ function SystemStatusPanel() {
         classes = 'bg-rose-950 text-rose-400 border-rose-800'
         break
       case 'Maintenance':
-        classes = 'bg-amber-950 text-amber-400 border-amber-800'
+        classes = 'bg-purple-950 text-purple-400 border-purple-800'
         break
       default:
         classes = 'bg-muted text-muted-foreground border-border'

@@ -13,9 +13,9 @@ interface Props {
 export const ForecastSummaryWidget: React.FC<Props> = ({ data }) => {
   const option = {
     tooltip: {
-      backgroundColor: "hsl(240 10% 8%)",
-      borderColor: "hsl(240 3.7% 20%)",
-      textStyle: { color: "hsl(0 0% 90%)", fontSize: 11 },
+      backgroundColor: "hsl(272 38% 8%)",
+      borderColor: "hsl(272 30% 20%)",
+      textStyle: { color: "hsl(272 20% 92%)", fontSize: 11 },
     },
     radar: {
       indicator: [
@@ -29,23 +29,23 @@ export const ForecastSummaryWidget: React.FC<Props> = ({ data }) => {
       shape: "circle",
       splitNumber: 4,
       axisName: {
-        color: "hsl(240 5% 64.9%)",
+        color: "hsl(272 20% 70%)",
         fontSize: 10,
       },
       splitLine: {
         lineStyle: {
           color: [
-            "hsla(240 5% 64.9% / 0.05)",
-            "hsla(240 5% 64.9% / 0.1)",
-            "hsla(240 5% 64.9% / 0.15)",
-            "hsla(240 5% 64.9% / 0.2)",
+            "hsla(272 40% 60% / 0.1)",
+            "hsla(272 40% 60% / 0.15)",
+            "hsla(272 40% 60% / 0.2)",
+            "hsla(272 40% 60% / 0.25)",
           ],
         },
       },
       splitArea: { show: false },
       axisLine: {
         lineStyle: {
-          color: "hsla(240 5% 64.9% / 0.1)",
+          color: "hsla(272 40% 60% / 0.15)",
         },
       },
     },
@@ -65,14 +65,14 @@ export const ForecastSummaryWidget: React.FC<Props> = ({ data }) => {
             ],
             name: "Score Indicators",
             areaStyle: {
-              color: "hsla(220 70% 50% / 0.15)",
+              color: "hsla(272 85% 65% / 0.2)",
             },
             lineStyle: {
-              color: "hsl(220 70% 50%)",
+              color: "hsl(272 85% 65%)",
               width: 2,
             },
             itemStyle: {
-              color: "hsl(220 70% 50%)",
+              color: "hsl(272 85% 65%)",
             },
           },
         ],
@@ -84,7 +84,7 @@ export const ForecastSummaryWidget: React.FC<Props> = ({ data }) => {
     <Card className="col-span-1 lg:col-span-1">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Forecast Composite Rating</CardTitle>
-        <Award className="h-4 w-4 text-muted-foreground" />
+        <Award className="h-4 w-4 text-purple-400" />
       </CardHeader>
       <CardContent className="flex flex-col justify-between h-[calc(100%-48px)] space-y-4">
         {/* Radar Visual */}

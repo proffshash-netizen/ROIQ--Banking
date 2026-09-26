@@ -86,8 +86,8 @@ export function Risk() {
                 activeCompany.creditScore >= 75
                   ? "text-emerald-400"
                   : activeCompany.creditScore >= 55
-                  ? "text-amber-400"
-                  : "text-rose-400"
+                  ? "text-purple-400"
+                  : "text-red-400"
               }`}
             >
               {activeCompany.creditScore}
@@ -117,7 +117,7 @@ export function Risk() {
         <Card
           className={`border-2 transition-all ${
             analysisResult.workflow_status === "PAUSED_FOR_APPROVAL"
-              ? "border-amber-500/50 bg-amber-500/5"
+              ? "border-purple-500/50 bg-purple-500/10"
               : "border-emerald-500/40 bg-emerald-500/5"
           }`}
         >
@@ -130,7 +130,7 @@ export function Risk() {
                   <span
                     className={
                       analysisResult.workflow_status === "PAUSED_FOR_APPROVAL"
-                        ? "text-amber-400 font-extrabold"
+                        ? "text-purple-400 font-extrabold"
                         : "text-emerald-400 font-extrabold"
                     }
                   >
@@ -143,12 +143,12 @@ export function Risk() {
                   Thread: {analysisResult.thread_id}
                 </span>
                 <span
-                  className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${
                     analysisResult.risk_category === "Low"
-                      ? "bg-emerald-400/10 text-emerald-400"
+                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                       : analysisResult.risk_category === "Medium"
-                      ? "bg-amber-400/10 text-amber-400"
-                      : "bg-rose-400/10 text-rose-400"
+                      ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
+                      : "bg-red-500/10 text-red-400 border-red-500/20"
                   }`}
                 >
                   {analysisResult.risk_category.toUpperCase()} RISK
@@ -178,7 +178,7 @@ export function Risk() {
               </div>
 
               <div className="p-3 rounded-lg border border-border/50 bg-background/50 space-y-1.5">
-                <span className="font-semibold text-rose-400 flex items-center gap-1.5">
+                <span className="font-semibold text-red-400 flex items-center gap-1.5">
                   <AlertTriangle className="h-3.5 w-3.5" /> Key Risk Factors & Covenants:
                 </span>
                 <ul className="list-disc list-inside space-y-1 text-muted-foreground">
@@ -193,8 +193,8 @@ export function Risk() {
 
             {/* Human in the loop action controls */}
             {analysisResult.workflow_status === "PAUSED_FOR_APPROVAL" && (
-              <div className="p-4 rounded-lg border border-amber-500/30 bg-amber-500/10 space-y-3">
-                <div className="flex items-center gap-2 text-amber-400 font-semibold text-sm">
+              <div className="p-4 rounded-lg border border-purple-500/30 bg-purple-500/10 space-y-3">
+                <div className="flex items-center gap-2 text-purple-400 font-semibold text-sm">
                   <UserCheck className="h-4 w-4" />
                   Mandatory Credit Committee Review (Human-in-the-Loop)
                 </div>

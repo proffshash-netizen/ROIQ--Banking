@@ -99,7 +99,7 @@ export function Forecast() {
         <div className="lg:col-span-2 flex flex-col justify-center space-y-4">
           <div className="space-y-2">
             <h2 className="text-lg font-semibold tracking-tight flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-indigo-400" />
+              <TrendingUp className="h-5 w-5 text-purple-400" />
               Composite Modeling Outlook
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -112,7 +112,7 @@ export function Forecast() {
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1">
                 Model Confidence
               </span>
-              <span className="text-2xl font-bold text-indigo-400">{summaryVM.forecastConfidence}%</span>
+              <span className="text-2xl font-bold text-purple-400">{summaryVM.forecastConfidence}%</span>
               <p className="text-[10px] text-muted-foreground mt-1">Based on historical parameter covariance.</p>
             </div>
             <div className="rounded-lg border border-border bg-card p-4">

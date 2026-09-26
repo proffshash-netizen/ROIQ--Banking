@@ -26,9 +26,9 @@ export const NetStableFundingWidget: React.FC<Props> = ({ data }) => {
           lineStyle: {
             width: 8,
             color: [
-              [0.5, "hsl(346 84% 61%)"],
-              [0.6, "hsl(43 96% 56%)"],
-              [1, "hsl(142 71% 45%)"],
+              [0.5, "hsl(352 82% 54%)"], // Critical Red
+              [0.6, "hsl(272 85% 65%)"], // Buffer Purple
+              [1, "hsl(142 76% 45%)"],   // Compliant Green
             ],
           },
         },
@@ -38,7 +38,7 @@ export const NetStableFundingWidget: React.FC<Props> = ({ data }) => {
           width: 4,
           offsetCenter: [0, 5],
           itemStyle: {
-            color: "hsl(240 5% 64.9%)",
+            color: "hsl(272 20% 70%)",
           },
         },
         axisTick: { show: false },
@@ -61,7 +61,7 @@ export const NetStableFundingWidget: React.FC<Props> = ({ data }) => {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Net Stable Funding Ratio (NSFR)</CardTitle>
-        <ShieldAlert className="h-4 w-4 text-muted-foreground" />
+        <ShieldAlert className="h-4 w-4 text-purple-400" />
       </CardHeader>
       <CardContent>
         <div className="flex justify-center" style={{ height: 120 }}>

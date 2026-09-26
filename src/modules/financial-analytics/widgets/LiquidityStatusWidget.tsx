@@ -14,7 +14,7 @@ export const LiquidityStatusWidget: React.FC<Props> = ({ data }) => (
   <Card className="col-span-1 md:col-span-2">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Liquidity Position</CardTitle>
-      <Droplets className="h-4 w-4 text-muted-foreground" />
+      <Droplets className="h-4 w-4 text-purple-400" />
     </CardHeader>
     <CardContent>
       <div className="flex items-baseline gap-3 mb-1">
@@ -36,7 +36,7 @@ export const LiquidityStatusWidget: React.FC<Props> = ({ data }) => (
         </div>
         <div className="rounded-lg bg-muted/50 p-3 text-center">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Quick Ratio</p>
-          <p className="text-2xl font-bold text-blue-400">{data.quickRatio.toFixed(2)}</p>
+          <p className="text-2xl font-bold text-purple-400">{data.quickRatio.toFixed(2)}</p>
         </div>
       </div>
       <AIInsight text={data.aiAssessment} />

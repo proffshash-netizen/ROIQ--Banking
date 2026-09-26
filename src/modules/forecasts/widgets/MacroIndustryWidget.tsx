@@ -16,27 +16,27 @@ export const MacroIndustryWidget: React.FC<Props> = ({ data }) => {
   const macroOption = {
     tooltip: {
       trigger: "axis" as const,
-      backgroundColor: "hsl(240 10% 8%)",
-      borderColor: "hsl(240 3.7% 20%)",
-      textStyle: { color: "hsl(0 0% 90%)", fontSize: 11 },
+      backgroundColor: "hsl(272 38% 8%)",
+      borderColor: "hsl(272 30% 20%)",
+      textStyle: { color: "hsl(272 20% 92%)", fontSize: 11 },
     },
     legend: {
       data: ["GDP Growth", "Inflation Rate", "Interest Rate", "Treasury Rate"],
       bottom: 0,
-      textStyle: { color: "hsl(240 5% 64.9%)", fontSize: 10 },
+      textStyle: { color: "hsl(272 20% 70%)", fontSize: 10 },
     },
     grid: { top: 20, right: 16, bottom: 40, left: 40 },
     xAxis: {
       type: "category" as const,
       data: data.macroTrends.map((t) => t.year),
-      axisLine: { lineStyle: { color: "hsl(240 3.7% 20%)" } },
-      axisLabel: { color: "hsl(240 5% 64.9%)", fontSize: 10 },
+      axisLine: { lineStyle: { color: "hsl(272 30% 20%)" } },
+      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10 },
     },
     yAxis: {
       type: "value" as const,
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: "hsl(240 3.7% 15%)", type: "dashed" as const } },
-      axisLabel: { color: "hsl(240 5% 64.9%)", fontSize: 10, formatter: "{value}%" },
+      splitLine: { lineStyle: { color: "hsl(272 30% 16%)", type: "dashed" as const } },
+      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10, formatter: "{value}%" },
     },
     series: [
       {
@@ -44,28 +44,28 @@ export const MacroIndustryWidget: React.FC<Props> = ({ data }) => {
         type: "line",
         data: data.macroTrends.map((t) => t.gdp),
         smooth: true,
-        itemStyle: { color: "hsl(160 60% 45%)" },
+        itemStyle: { color: "hsl(142 76% 45%)" },
       },
       {
         name: "Inflation Rate",
         type: "line",
         data: data.macroTrends.map((t) => t.inflation),
         smooth: true,
-        itemStyle: { color: "hsl(340 75% 55%)" },
+        itemStyle: { color: "hsl(352 82% 54%)" },
       },
       {
         name: "Interest Rate",
         type: "line",
         data: data.macroTrends.map((t) => t.interest),
         smooth: true,
-        itemStyle: { color: "hsl(220 70% 50%)" },
+        itemStyle: { color: "hsl(272 85% 65%)" },
       },
       {
         name: "Treasury Rate",
         type: "line",
         data: data.macroTrends.map((t) => t.treasury),
         smooth: true,
-        itemStyle: { color: "hsl(30 80% 55%)" },
+        itemStyle: { color: "hsl(285 85% 72%)" },
       },
     ],
   };
@@ -76,35 +76,35 @@ export const MacroIndustryWidget: React.FC<Props> = ({ data }) => {
     tooltip: {
       trigger: "axis" as const,
       axisPointer: { type: "shadow" as const },
-      backgroundColor: "hsl(240 10% 8%)",
-      borderColor: "hsl(240 3.7% 20%)",
-      textStyle: { color: "hsl(0 0% 90%)", fontSize: 11 },
+      backgroundColor: "hsl(272 38% 8%)",
+      borderColor: "hsl(272 30% 20%)",
+      textStyle: { color: "hsl(272 20% 92%)", fontSize: 11 },
     },
     grid: { top: 10, right: 30, bottom: 20, left: 130 },
     xAxis: {
       type: "value" as const,
       axisLine: { show: false },
-      splitLine: { lineStyle: { color: "hsl(240 3.7% 15%)", type: "dashed" as const } },
-      axisLabel: { color: "hsl(240 5% 64.9%)", fontSize: 9, formatter: "{value}%" },
+      splitLine: { lineStyle: { color: "hsl(272 30% 16%)", type: "dashed" as const } },
+      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 9, formatter: "{value}%" },
     },
     yAxis: {
       type: "category" as const,
       data: sortedSegments.map((s) => s.segment),
-      axisLine: { lineStyle: { color: "hsl(240 3.7% 20%)" } },
-      axisLabel: { color: "hsl(240 5% 64.9%)", fontSize: 10 },
+      axisLine: { lineStyle: { color: "hsl(272 30% 20%)" } },
+      axisLabel: { color: "hsl(272 20% 70%)", fontSize: 10 },
     },
     series: [
       {
         type: "bar",
         data: sortedSegments.map((s) => s.growthRate),
         itemStyle: {
-          color: "hsl(280 65% 60%)",
+          color: "hsl(272 85% 65%)",
           borderRadius: [0, 4, 4, 0],
         },
         label: {
           show: true,
           position: "right",
-          color: "hsl(240 5% 64.9%)",
+          color: "hsl(272 20% 70%)",
           fontSize: 9,
           formatter: "{c}%",
         },
@@ -116,7 +116,7 @@ export const MacroIndustryWidget: React.FC<Props> = ({ data }) => {
     <Card className="col-span-1 lg:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Macroeconomic & Industry Analysis</CardTitle>
-        <Globe className="h-4 w-4 text-muted-foreground" />
+        <Globe className="h-4 w-4 text-purple-400" />
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Indicators */}
@@ -127,15 +127,15 @@ export const MacroIndustryWidget: React.FC<Props> = ({ data }) => {
           </div>
           <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
             <span className="text-[10px] text-muted-foreground block uppercase font-medium">Inflation</span>
-            <span className="text-lg font-bold text-rose-400">{formatPct(data.inflationRate)}</span>
+            <span className="text-lg font-bold text-red-400">{formatPct(data.inflationRate)}</span>
           </div>
           <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
             <span className="text-[10px] text-muted-foreground block uppercase font-medium">Interest Rate</span>
-            <span className="text-lg font-bold text-blue-400">{formatPct(data.interestRate)}</span>
+            <span className="text-lg font-bold text-purple-400">{formatPct(data.interestRate)}</span>
           </div>
           <div className="bg-muted/30 border border-border/40 rounded-lg p-3">
             <span className="text-[10px] text-muted-foreground block uppercase font-medium">Industry Growth</span>
-            <span className="text-lg font-bold text-purple-400">{formatPct(data.industryGrowth)}</span>
+            <span className="text-lg font-bold text-purple-300">{formatPct(data.industryGrowth)}</span>
           </div>
         </div>
 
@@ -168,7 +168,7 @@ export const MacroIndustryWidget: React.FC<Props> = ({ data }) => {
               </div>
               <div>
                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground block">Market Sentiment</span>
-                <span className="text-sm font-bold mt-0.5 block text-blue-400">{data.marketSentiment}</span>
+                <span className="text-sm font-bold mt-0.5 block text-purple-400">{data.marketSentiment}</span>
               </div>
               <div>
                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground block">Competition</span>

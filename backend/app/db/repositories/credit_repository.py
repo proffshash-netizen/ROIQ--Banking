@@ -156,3 +156,19 @@ class CreditRepository:
             .filter(CreditEvaluationModel.thread_id == thread_id)
             .first()
         )
+
+    def get_latest_recommendation_by_company(self, company_id: int) -> Optional[LoanRecommendationModel]:
+        return (
+            self.db.query(LoanRecommendationModel)
+            .filter(LoanRecommendationModel.company_id == company_id)
+            .order_by(LoanRecommendationModel.id.desc())
+            .first()
+        )
+
+    def get_latest_human_review_by_company(self, company_id: int) -> Optional[HumanReviewDecisionModel]:
+        return (
+            self.db.query(HumanReviewDecisionModel)
+            .filter(HumanReviewDecisionModel.company_id == company_id)
+            .order_by(HumanReviewDecisionModel.id.desc())
+            .first()
+        )

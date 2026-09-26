@@ -15,7 +15,7 @@ export const ExecutiveSummaryWidget: React.FC<Props> = ({ data }) => {
     switch (decision) {
       case "Approved": return <CheckCircle2 className="h-5 w-5 text-emerald-400" />;
       case "Rejected": return <XCircle className="h-5 w-5 text-red-400" />;
-      default: return <AlertCircle className="h-5 w-5 text-amber-400" />;
+      default: return <AlertCircle className="h-5 w-5 text-purple-400" />;
     }
   };
 
@@ -47,7 +47,7 @@ export const ExecutiveSummaryWidget: React.FC<Props> = ({ data }) => {
             <div className="flex items-center gap-6 border-t md:border-t-0 pt-3 md:pt-0 border-border/50">
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Unified Risk Score</p>
-                <p className="text-2xl font-black tracking-tight text-blue-400">{data.unifiedRiskScore}<span className="text-xs text-muted-foreground font-normal">/100</span></p>
+                <p className="text-2xl font-black tracking-tight text-purple-400">{data.unifiedRiskScore}<span className="text-xs text-muted-foreground font-normal">/100</span></p>
               </div>
               <div className="h-8 w-px bg-border/50" />
               <div>
@@ -64,7 +64,7 @@ export const ExecutiveSummaryWidget: React.FC<Props> = ({ data }) => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-blue-400" />
+              <ShieldCheck className="h-4 w-4 text-purple-400" />
               Risk Score Drivers & Components
             </CardTitle>
           </CardHeader>
@@ -79,8 +79,8 @@ export const ExecutiveSummaryWidget: React.FC<Props> = ({ data }) => {
         {/* Warning Signals */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2 text-amber-400">
-              <AlertTriangle className="h-4 w-4 text-amber-400" />
+            <CardTitle className="text-sm font-medium flex items-center gap-2 text-red-400">
+              <AlertTriangle className="h-4 w-4 text-red-400" />
               Key Warning Signals ({data.warningSignals.length})
             </CardTitle>
           </CardHeader>
@@ -90,8 +90,8 @@ export const ExecutiveSummaryWidget: React.FC<Props> = ({ data }) => {
             ) : (
               <div className="space-y-2">
                 {data.warningSignals.map((signal, i) => (
-                  <div key={i} className="flex items-start gap-2.5 p-2 rounded-lg bg-amber-500/5 border border-amber-500/10">
-                    <AlertTriangle className="h-3.5 w-3.5 text-amber-400 shrink-0 mt-0.5" />
+                  <div key={i} className="flex items-start gap-2.5 p-2 rounded-lg bg-red-500/5 border border-red-500/15">
+                    <AlertTriangle className="h-3.5 w-3.5 text-red-400 shrink-0 mt-0.5" />
                     <p className="text-xs text-zinc-300 leading-snug">{signal}</p>
                   </div>
                 ))}
