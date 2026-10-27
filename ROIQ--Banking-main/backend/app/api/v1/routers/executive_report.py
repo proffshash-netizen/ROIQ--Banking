@@ -3,6 +3,10 @@ from fastapi import APIRouter, Depends
 
 from ..dependencies import RequireRole
 from ....core.responses import build_success_response
+from ....core.synthetic_dataset import (
+    SYNTHETIC_DATA_LABEL,
+    SYNTHETIC_INDIAN_COMPANY,
+)
 from ....schemas.executive_report import (
     ConditionsSection,
     CreditRiskSummarySection,
@@ -27,16 +31,13 @@ company_service = CompanyService()
 async def get_executive_report(company_id: str) -> dict:
     f_ctx = company_service.get_financial_context(company_id)
     cid = f_ctx.get("company_id") or company_id
-    company_name = f_ctx.get("name") or f"Company {cid}"
-    sector = f_ctx.get("sector") or "Diversified Corporates"
+    company_name = f_ctx.get("name") or SYNTHETIC_INDIAN_COMPANY["name"]
+    sector = f_ctx.get("sector") or SYNTHETIC_INDIAN_COMPANY["sector"]
     score = float(f_ctx.get("credit_score") or 72.0)
-    exp_str = f_ctx.get("loan_exposure") or "$420M"
 
-    raw_amt = 420_000_000.0
-    if "B" in exp_str:
-        raw_amt = float("".join(c for c in exp_str if c.isdigit() or c == ".")) * 1_000_000_000.0
-    elif "M" in exp_str:
-        raw_amt = float("".join(c for c in exp_str if c.isdigit() or c == ".")) * 1_000_000.0
+    # Standardized in ₹ Lakh
+    raw_amt = SYNTHETIC_INDIAN_COMPANY["requested_loan"]  # 450.0 lakh
+    exp_str = f"₹{raw_amt:.2f} lakh"
 
     risk_level = "Low" if score >= 75 else "Medium" if score >= 58 else "High" if score >= 45 else "Critical"
 
@@ -64,6 +65,7 @@ async def get_executive_report(company_id: str) -> dict:
             if rec_record:
                 decision = rec_record.decision.replace("_", " ") if rec_record.decision else decision
                 raw_amt = float(rec_record.requested_amount)
+                exp_str = f"₹{raw_amt:.2f} lakh"
             if review_record:
                 officer_signoff = f"Officer Sign-off ({review_record.officer}): {review_record.notes} (Approved: {review_record.approved})"
     except Exception as e:
@@ -81,19 +83,20 @@ async def get_executive_report(company_id: str) -> dict:
 
     strengths = [
         f"Established market presence in {sector} sector.",
-        f"Demonstrated revenue base exceeding {f_ctx.get('revenue', '$1B'):,}.",
-        "Active treasury management with positive unencumbered liquidity buffers.",
+        f"Annual revenue of ₹{SYNTHETIC_INDIAN_COMPANY['annual_revenue']:.0f} lakh with ₹{SYNTHETIC_INDIAN_COMPANY['ebitda']:.0f} lakh EBITDA.",
+        f"Prudent cash reserves of ₹{SYNTHETIC_INDIAN_COMPANY['cash_and_equivalents']:.0f} lakh providing 3.0 months cash coverage.",
     ]
     weaknesses = []
-    de = float(f_ctx.get("debt_to_equity") or 1.5)
-    dscr = float(f_ctx.get("dscr") or 1.6)
+    de = SYNTHETIC_INDIAN_COMPANY["debt_to_equity"]  # 0.75x
+    dscr = SYNTHETIC_INDIAN_COMPANY["dscr"]  # 2.0x
+    cov = SYNTHETIC_INDIAN_COMPANY["ebitda_interest_coverage"]  # 4.0x
 
     if de > 2.0:
         weaknesses.append(f"Elevated corporate leverage: D/E ratio currently at {de:.2f}x.")
     if dscr < 1.5:
         weaknesses.append(f"Tighter cash debt-service coverage: DSCR at {dscr:.2f}x.")
     if not weaknesses:
-        weaknesses.append("Sensitivity to broader macroeconomic rate adjustments and currency fluctuations.")
+        weaknesses.append("Sensitivity to input raw material cost variations and interest rate cycles.")
 
     report = ExecutiveReportVM(
         reportId=report_id,
@@ -102,47 +105,47 @@ async def get_executive_report(company_id: str) -> dict:
             industry=sector,
             requestedLoanAmount=exp_str,
             rawLoanAmount=raw_amt,
-            loanPurpose="Working Capital & Production Facility Expansion",
+            loanPurpose="Working Capital & Production Facility Expansion (₹ lakh)",
             loanTenure="36 Months",
             overallRecommendation=decision,
             reportGenerationDate=today_str,
             borrowerRating=rating_map[risk_level],
         ),
         keyFinancialHighlights=FinancialHighlightsSection(
-            liquidityPosition=f"Current Ratio {f_ctx.get('current_ratio', 1.45)}x",
-            treasuryHealth="NSFR 118% | LCR 145%",
-            revenueTrend="+12.4% CAGR YoY",
-            profitability=f"EBITDA Margin {f_ctx.get('operating_margin_pct', 18.5)}%",
-            cashFlow=f"Operating Cash Flow ${(raw_amt * 0.45) / 1_000_000:.1f}M",
-            debtPosition=f"Total Debt ${(raw_amt * 1.8) / 1_000_000:.1f}M | D/E {de:.2f}x",
+            liquidityPosition=f"Current Ratio {SYNTHETIC_INDIAN_COMPANY['current_ratio']:.2f}x",
+            treasuryHealth="NSFR 118.2% | Cash Coverage 3.0 Months",
+            revenueTrend=f"Annual Revenue ₹{SYNTHETIC_INDIAN_COMPANY['annual_revenue']:.0f} lakh",
+            profitability=f"EBITDA Margin {SYNTHETIC_INDIAN_COMPANY['ebitda_margin_pct']:.1f}% | Net Margin {SYNTHETIC_INDIAN_COMPANY['net_profit_margin_pct']:.1f}%",
+            cashFlow=f"Annual Operating Cash Flow ₹{SYNTHETIC_INDIAN_COMPANY['annual_operating_cash_flow']:.0f} lakh",
+            debtPosition=f"Total Debt ₹{SYNTHETIC_INDIAN_COMPANY['total_debt']:.0f} lakh | D/E {de:.2f}x",
             strengths=strengths,
             weaknesses=weaknesses,
         ),
         macroIndustryOutlook=MacroIndustryOutlookSection(
-            gdpOutlook="Regional GDP +2.4% annually",
-            inflation="CPI stabilizing at 2.8%",
-            interestRateEnvironment="Terminal benchmark rate steady at 4.75%",
-            industryGrowth="Sector growth +7.8% YoY",
-            countryRisk="Low — AAA/AA+ sovereign institutional rating",
-            aiInterpretation="Stable macro backdrop with disciplined monetary conditions offsetting input headwinds.",
+            gdpOutlook="India GDP growth +6.8% annually",
+            inflation="CPI stabilizing at 4.8%",
+            interestRateEnvironment="RBI Benchmark Repo Rate at 6.50%",
+            industryGrowth="Core Industrial growth +8.5% YoY",
+            countryRisk="Moderate — BBB- sovereign rating (Stable)",
+            aiInterpretation="Stable macro backdrop with sustained domestic infrastructure demand supporting credit capacity.",
         ),
         marketFXRiskSummary=MarketFXRiskSummarySection(
-            var95=f"${(raw_amt * 0.015) / 1_000_000:.2f}M",
-            expectedShortfall=f"${(raw_amt * 0.022) / 1_000_000:.2f}M",
-            fxExposure=f"${(raw_amt * 2.1) / 1_000_000:.1f}M",
-            hedgedVsUnhedged="68% Hedged / 32% Unhedged",
-            tailRisk="Controlled (Tail Risk Ratio 1.52)",
+            var95=f"₹{(raw_amt * 0.015):.2f} lakh",
+            expectedShortfall=f"₹{(raw_amt * 0.022):.2f} lakh",
+            fxExposure=f"₹{(raw_amt * 0.40):.2f} lakh",
+            hedgedVsUnhedged="78% Hedged / 22% Unhedged",
+            tailRisk="Controlled (Tail Risk Ratio 1.48)",
             overallMarketRiskConclusion="Market and FX risks are within institutional limits under standard rate shocks.",
         ),
         creditRiskSummary=CreditRiskSummarySection(
             creditRating=rating_map[risk_level].split(" ")[0],
-            existingDebt=f"${(raw_amt * 1.8) / 1_000_000:.1f}M",
+            existingDebt=f"₹{SYNTHETIC_INDIAN_COMPANY['total_debt']:.0f} lakh",
             debtRatios=[
                 {"name": "Debt-to-Equity", "value": f"{de:.2f}x"},
-                {"name": "Interest Coverage", "value": f"{f_ctx.get('interest_coverage', 4.5):.2f}x"},
-                {"name": "DSCR", "value": f"{dscr:.2f}x"},
+                {"name": "EBITDA Interest Coverage", "value": f"{cov:.2f}x"},
+                {"name": "Current Ratio", "value": f"{SYNTHETIC_INDIAN_COMPANY['current_ratio']:.2f}x"},
             ],
-            repaymentBehaviour="Historically satisfactory with no senior facility defaults.",
+            repaymentBehaviour="Historically satisfactory with regular debt service track record.",
             defaultHistory="Clean institutional credit record.",
             primaryStrengths=strengths[:2],
             primaryConcerns=weaknesses[:2],
@@ -152,9 +155,10 @@ async def get_executive_report(company_id: str) -> dict:
             overallRiskLevel=risk_level,
             confidenceScore=94.2,
             recommendedDecision=decision,
-            triggeredRule="Credit Committee Policy #CR-402 (Leverage & DSCR Thresholds)",
+            triggeredRule="Credit Committee Policy #CR-402 (Leverage & Coverage Thresholds)",
         ),
         keyInsights=[
+            f"{SYNTHETIC_DATA_LABEL}",
             f"Underwriting model assigned {risk_level} risk standing (score {score:.1f}/100).",
             f"Requested facility of {exp_str} evaluated with 36-month amortization.",
             f"Human review {'required' if risk_level != 'Low' else 'optional'} under bank risk policy.",
@@ -163,27 +167,29 @@ async def get_executive_report(company_id: str) -> dict:
             isConditional=decision == "APPROVE WITH CONDITIONS",
             isRejected=decision == "REJECT",
             requiredCollateral=[
-                "First lien pari-passu charge over unencumbered fixed plant and machinery.",
-                "Corporate guarantee from primary holding entity.",
+                "First lien pari-passu charge over unencumbered plant and machinery.",
+                "Corporate guarantee from primary operating promoters.",
             ],
             financialCovenants=[
-                f"Minimum DSCR >= {max(1.20, dscr * 0.85):.2f}x tested semi-annually.",
-                f"Maximum Debt-to-Equity <= {min(3.5, de * 1.25):.2f}x.",
+                f"Minimum EBITDA Interest Coverage >= 3.0x tested semi-annually.",
+                f"Maximum Debt-to-Equity <= 1.25x.",
             ],
             monitoringRequirements=[
                 "Quarterly unaudited financial statements within 45 days.",
                 "Annual audited statements within 90 days.",
             ],
-            rejectionReasons=[] if decision != "REJECT" else ["Breach of maximum leverage ceiling (D/E > 3.8x)."],
+            rejectionReasons=[] if decision != "REJECT" else ["Breach of maximum leverage ceiling."],
         ),
         aiExplainabilityNarrative=(
-            f"The quantitative loan evaluation framework for {company_name} synthesized financial statements, "
-            f"market FX volatility, and macro indicators. The final composite score of {score:.1f} places the company "
-            f"in the {risk_level} bracket. The underwriting engine advises {decision} with proactive covenant tracking."
+            f"{SYNTHETIC_DATA_LABEL} The quantitative loan evaluation framework for {company_name} synthesized "
+            f"audited financials (Revenue: ₹{SYNTHETIC_INDIAN_COMPANY['annual_revenue']} lakh, EBITDA: ₹{SYNTHETIC_INDIAN_COMPANY['ebitda']} lakh, "
+            f"Interest Coverage: {cov}x), treasury liquidity (Cash coverage: 3.0 months), and macroeconomic trends. "
+            f"The final composite score of {score:.1f} places the company in the {risk_level} risk bracket. "
+            f"The underwriting engine advises {decision} with structured covenant tracking."
         ),
         disclaimer=(
-            "CONFIDENTIAL — This credit assessment is generated for authorized banking officers of the institutional "
-            "credit committee. All automated evaluations constitute advisory decision support and require formal committee sign-off."
+            f"{SYNTHETIC_DATA_LABEL} CONFIDENTIAL — This credit assessment is generated for authorized banking officers "
+            "of the institutional credit committee. All automated evaluations constitute advisory decision support and require formal committee sign-off."
         ),
     )
 

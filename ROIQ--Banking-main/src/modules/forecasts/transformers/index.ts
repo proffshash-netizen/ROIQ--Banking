@@ -16,11 +16,10 @@ const safeNum = (v: unknown, fallback = 0): number =>
 const safeStr = (v: unknown, fallback = ""): string =>
   typeof v === "string" ? v : fallback;
 
+import { formatCurrency as sharedFormatCurrency } from "@/lib/currency";
+
 export const formatCurrency = (value: number): string => {
-  if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
-  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
-  if (value >= 1_000) return `$${(value / 1_000).toFixed(1)}K`;
-  return `$${value.toFixed(0)}`;
+  return sharedFormatCurrency(value, "INR");
 };
 
 export const formatPct = (value: number): string => `${value.toFixed(1)}%`;

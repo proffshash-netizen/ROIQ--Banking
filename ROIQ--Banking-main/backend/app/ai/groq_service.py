@@ -48,7 +48,7 @@ class GroqLLMService:
             f"Calculated Score: {credit_score}/100\n"
             f"Risk Category: {risk_category}\n"
             f"Probability of Default: {probability_of_default * 100:.2f}%\n"
-            f"Requested Loan: ${requested_loan:,.0f}\n"
+            f"Requested Loan: ₹{requested_loan:,.2f} lakh\n"
             f"Financial Ratios: {json.dumps(metrics)}"
         )
 

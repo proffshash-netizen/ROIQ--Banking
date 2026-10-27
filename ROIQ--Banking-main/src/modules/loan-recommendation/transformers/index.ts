@@ -14,12 +14,10 @@ import type {
   RiskLevel,
 } from "../types";
 
-export function formatCurrency(value: number, currency = "USD"): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(value);
+import { formatCurrency as sharedFormatCurrency } from "@/lib/currency";
+
+export function formatCurrency(value: number, currency = "INR"): string {
+  return sharedFormatCurrency(value, currency);
 }
 
 /**

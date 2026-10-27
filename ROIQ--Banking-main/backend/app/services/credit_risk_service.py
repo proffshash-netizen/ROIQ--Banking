@@ -23,26 +23,23 @@ class CreditRiskService:
         self.company_service = company_service or CompanyService()
 
     def get_credit_risk_data(self, company_id: str) -> CreditRiskServiceResponse:
+        from ..core.synthetic_dataset import SYNTHETIC_INDIAN_COMPANY, SYNTHETIC_DATA_LABEL
         company = self.company_service.get_company_by_id(company_id)
         if not company:
             company = self.company_service.get_company_by_id("1")  # safe fallback
 
         score = company.creditScore
-        exp_str = company.loanExposure
-        exp_mil = 420.0
-        if "B" in exp_str:
-            exp_mil = float("".join(c for c in exp_str if c.isdigit() or c == ".")) * 1000.0
-        elif "M" in exp_str:
-            exp_mil = float("".join(c for c in exp_str if c.isdigit() or c == "."))
+        # Loan exposure in ₹ Lakh
+        exp_lakh = SYNTHETIC_INDIAN_COMPANY["requested_loan"]  # 450.0 lakh
 
-        curr_exp = round(exp_mil * 1_000_000 * 2.1)
+        curr_exp = round(exp_lakh * 0.40, 2)  # 180.0 lakh FX/market exposure
         hedged_pct = 0.78 if score >= 80 else 0.62 if score >= 65 else 0.48 if score >= 50 else 0.32
-        hedged_exp = round(curr_exp * hedged_pct)
-        unhedged_exp = curr_exp - hedged_exp
+        hedged_exp = round(curr_exp * hedged_pct, 2)
+        unhedged_exp = round(curr_exp - hedged_exp, 2)
         pnl_vol = round(4.2 + (100 - score) * 0.082, 2)
         fx_vol = round(8.5 + (100 - score) * 0.12, 1)
-        var_95 = round(curr_exp * 0.0145 * (1 + (100 - score) / 200))
-        es = round(var_95 * 1.52)
+        var_95 = round(curr_exp * 0.0145 * (1 + (100 - score) / 200), 2)
+        es = round(var_95 * 1.52, 2)
 
         market_risk = MarketRiskInput(
             company_id=company.name,
@@ -50,7 +47,7 @@ class CreditRiskService:
                 var_95=var_95,
                 expected_shortfall=es,
                 pnl_volatility=pnl_vol,
-                tail_risk_ratio=round(es / max(var_95, 1), 2),
+                tail_risk_ratio=round(es / max(var_95, 0.01), 2),
                 currency_exposure=curr_exp,
                 hedged_exposure=hedged_exp,
                 unhedged_exposure=unhedged_exp,
@@ -61,13 +58,13 @@ class CreditRiskService:
         )
 
         f_context = self.company_service.get_financial_context(company_id)
-        total_debt = round(exp_mil * 1_000_000 * 3.8)
+        total_debt = SYNTHETIC_INDIAN_COMPANY["total_debt"]  # ₹1500.0 lakh
         rating = "AA-" if score >= 88 else "A+" if score >= 80 else "A-" if score >= 72 else "BBB" if score >= 58 else "BB-" if score >= 45 else "CCC"
-        debt_to_eq = float(f_context.get("debt_to_equity") or (0.38 if score >= 85 else 0.85 if score >= 72 else 1.42 if score >= 58 else 2.10 if score >= 45 else 3.20))
-        interest_cov = float(f_context.get("interest_coverage") or (12.5 if score >= 85 else 7.8 if score >= 72 else 4.2 if score >= 58 else 2.1 if score >= 45 else 0.9))
-        dscr = float(f_context.get("dscr") or (2.85 if score >= 85 else 1.95 if score >= 72 else 1.30 if score >= 58 else 0.98 if score >= 45 else 0.65))
-        debt_to_eb = float(f_context.get("debt_to_ebitda") or (1.8 if score >= 85 else 2.9 if score >= 72 else 4.2 if score >= 58 else 6.0 if score >= 45 else 8.5))
-        curr_ratio = float(f_context.get("current_ratio") or (2.4 if score >= 85 else 1.75 if score >= 72 else 1.25 if score >= 58 else 0.95 if score >= 45 else 0.72))
+        debt_to_eq = SYNTHETIC_INDIAN_COMPANY["debt_to_equity"]  # 0.75x
+        interest_cov = SYNTHETIC_INDIAN_COMPANY["ebitda_interest_coverage"]  # 4.0x
+        dscr = SYNTHETIC_INDIAN_COMPANY["dscr"]  # 2.0x
+        debt_to_eb = SYNTHETIC_INDIAN_COMPANY["debt_to_ebitda"]  # 3.125x
+        curr_ratio = SYNTHETIC_INDIAN_COMPANY["current_ratio"]  # 2.0x
         prob_def = round((0.015 if score >= 85 else 0.022 if score >= 75 else 0.045 if score >= 58 else 0.095 if score >= 45 else 0.185) * 100, 2)
 
         credit_risk = CreditRiskInput(
@@ -80,12 +77,12 @@ class CreditRiskService:
                 "open_credit_lines": 5,
             },
             existing_debt={
-                "total_outstanding": total_debt,
-                "short_term_debt": round(total_debt * 0.22),
-                "long_term_debt": round(total_debt * 0.62),
-                "revolving_credit": round(total_debt * 0.10),
-                "secured_debt": round(total_debt * 0.72),
-                "unsecured_debt": round(total_debt * 0.28),
+                "total_outstanding": total_debt,  # ₹1,500 lakh
+                "short_term_debt": round(total_debt * 0.20, 2),  # ₹300 lakh
+                "long_term_debt": round(total_debt * 0.80, 2),   # ₹1,200 lakh
+                "revolving_credit": round(total_debt * 0.10, 2),
+                "secured_debt": round(total_debt * 0.75, 2),
+                "unsecured_debt": round(total_debt * 0.25, 2),
             },
             default_history={
                 "total_defaults": 2 if score < 45 else 1 if score < 58 else 0,

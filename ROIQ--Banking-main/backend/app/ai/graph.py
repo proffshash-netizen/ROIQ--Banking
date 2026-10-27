@@ -33,22 +33,22 @@ def ingest_node(state: LoanAIState) -> LoanAIState:
     company_name = state.get("company_name") or customer_data.get("name") or f"Company {company_id}"
     sector = state.get("sector") or customer_data.get("sector") or "Diversified Corporates"
 
-    # Financial extractions
-    revenue = float(customer_data.get("revenue") or customer_data.get("income") or 450_000_000.0)
-    ebitda = float(customer_data.get("ebitda") or (revenue * 0.22))
-    total_debt = float(customer_data.get("existing_debt") or customer_data.get("total_debt") or 380_000_000.0)
-    equity = float(customer_data.get("equity") or (total_debt * 0.65))
-    cash_flow = float(customer_data.get("operating_cash_flow") or (ebitda * 0.85))
-    interest_expense = float(customer_data.get("interest_expense") or (total_debt * 0.065))
-    requested_loan = float(customer_data.get("requested_loan") or 120_000_000.0)
+    # Financial extractions (Default baseline is ₹ Lakh from centralized synthetic dataset)
+    revenue = float(customer_data.get("annual_revenue") or customer_data.get("revenue") or 3200.0)
+    ebitda = float(customer_data.get("ebitda") or (revenue * 0.15))
+    total_debt = float(customer_data.get("existing_debt") or customer_data.get("total_debt") or 1500.0)
+    equity = float(customer_data.get("equity") or customer_data.get("shareholders_equity") or 2000.0)
+    cash_flow = float(customer_data.get("annual_operating_cash_flow") or customer_data.get("operating_cash_flow") or 360.0)
+    interest_expense = float(customer_data.get("annual_interest_expense") or customer_data.get("interest_expense") or 120.0)
+    requested_loan = float(customer_data.get("requested_loan") or 450.0)
 
     # Calculate baseline ratios or use pre-calculated audited figures
     debt_to_equity = float(customer_data.get("debt_to_equity") or round(total_debt / max(equity, 1.0), 2))
-    interest_coverage = float(customer_data.get("interest_coverage") or round(ebitda / max(interest_expense, 1.0), 2))
+    interest_coverage = float(customer_data.get("ebitda_interest_coverage") or customer_data.get("interest_coverage") or round(ebitda / max(interest_expense, 1.0), 2))
     debt_to_ebitda = float(customer_data.get("debt_to_ebitda") or round(total_debt / max(ebitda, 1.0), 2))
-    dscr = float(customer_data.get("dscr") or round(cash_flow / max(interest_expense + (requested_loan * 0.15), 1.0), 2))
-    operating_margin = float(customer_data.get("operating_margin_pct") or round((ebitda / max(revenue, 1.0)) * 100, 1))
-    current_ratio = float(customer_data.get("current_ratio") or 1.45)
+    dscr = float(customer_data.get("dscr") or 2.0)
+    operating_margin = float(customer_data.get("operating_margin_pct") or customer_data.get("ebitda_margin_pct") or round((ebitda / max(revenue, 1.0)) * 100, 1))
+    current_ratio = float(customer_data.get("current_ratio") or 2.0)
 
     metrics = {
         "revenue": revenue,

@@ -3,6 +3,11 @@ from fastapi import APIRouter, Depends
 
 from ..dependencies import RequireRole
 from ....core.responses import build_success_response
+from ....core.synthetic_dataset import (
+    SYNTHETIC_DATA_LABEL,
+    SYNTHETIC_INDIAN_COMPANY,
+    calculate_financial_ratios,
+)
 from ....schemas.forecasts import (
     BalanceSheetData,
     CashFlowStatementData,
@@ -28,26 +33,30 @@ company_service = CompanyService()
 @router.get("/{company_id}", response_model=dict, summary="Get company financial forecasts and macro trends")
 async def get_forecasts(company_id: str) -> dict:
     f_ctx = company_service.get_financial_context(company_id)
-    rev = float(f_ctx.get("revenue") or 1_500_000_000.0)
-    ebitda = float(f_ctx.get("ebitda") or rev * 0.22)
-    net_inc = float(f_ctx.get("net_income") or ebitda * 0.55)
-    total_debt = float(f_ctx.get("total_debt") or rev * 0.60)
-    equity = float(f_ctx.get("equity") or total_debt * 0.85)
-    total_assets = total_debt + equity
+    
+    # Financial metrics in ₹ Lakh from centralized synthetic dataset
+    rev = SYNTHETIC_INDIAN_COMPANY["annual_revenue"]       # 3200.0 lakh
+    ebitda = SYNTHETIC_INDIAN_COMPANY["ebitda"]            # 480.0 lakh
+    net_inc = SYNTHETIC_INDIAN_COMPANY["net_profit"]       # 240.0 lakh
+    total_assets = SYNTHETIC_INDIAN_COMPANY["total_assets"] # 8500.0 lakh
+    total_debt = SYNTHETIC_INDIAN_COMPANY["total_debt"]    # 1500.0 lakh
+    equity = SYNTHETIC_INDIAN_COMPANY["shareholders_equity"] # 2000.0 lakh
+    curr_assets = SYNTHETIC_INDIAN_COMPANY["current_assets"] # 1200.0 lakh
+    curr_liab = SYNTHETIC_INDIAN_COMPANY["current_liabilities"] # 600.0 lakh
 
-    # Generate deterministic trend and forward projections (2022 to 2026F)
-    growth_rates = [0.82, 0.90, 0.96, 1.0, 1.08]
+    # Growth trajectory: 2022 to 2026(F) in ₹ Lakh
+    growth_rates = [0.80, 0.88, 0.95, 1.00, 1.08]
     periods = ["2022", "2023", "2024", "2025", "2026 (F)"]
 
     rev_trends = [
-        RevenueTrendPoint(period=p, value=round(rev * g))
+        RevenueTrendPoint(period=p, value=round(rev * g, 1))
         for p, g in zip(periods, growth_rates)
     ]
     prof_trends = [
         ProfitabilityTrendPoint(
             period=p,
-            net_income=round(net_inc * g),
-            operating_income=round(ebitda * g),
+            net_income=round(net_inc * g, 1),
+            operating_income=round(ebitda * g, 1),
         )
         for p, g in zip(periods, growth_rates)
     ]
@@ -57,30 +66,30 @@ async def get_forecasts(company_id: str) -> dict:
         profitability_trend=prof_trends,
         current_revenue=rev,
         current_net_income=net_inc,
-        gross_profit_margin=round((ebitda / max(rev, 1.0)) * 100 + 12.0, 1),
-        net_profit_margin=round((net_inc / max(rev, 1.0)) * 100, 1),
+        gross_profit_margin=SYNTHETIC_INDIAN_COMPANY["ebitda_margin_pct"],  # 15.0%
+        net_profit_margin=SYNTHETIC_INDIAN_COMPANY["net_profit_margin_pct"],  # 7.5%
     )
 
     balance = BalanceSheetData(
         total_assets=total_assets,
         total_liabilities=total_debt,
         total_equity=equity,
-        current_ratio=float(f_ctx.get("current_ratio") or 1.45),
-        debt_to_equity=float(f_ctx.get("debt_to_equity") or 0.85),
+        current_ratio=SYNTHETIC_INDIAN_COMPANY["current_ratio"],  # 2.0x
+        debt_to_equity=SYNTHETIC_INDIAN_COMPANY["debt_to_equity"],  # 0.75x
     )
 
     cash_flow = CashFlowStatementData(
-        operating_cash_flow=round(ebitda * 0.85),
-        investing_cash_flow=round(-ebitda * 0.35),
-        financing_cash_flow=round(-ebitda * 0.20),
-        free_cash_flow=round(ebitda * 0.50),
+        operating_cash_flow=SYNTHETIC_INDIAN_COMPANY["annual_operating_cash_flow"],  # 360.0 lakh
+        investing_cash_flow=-140.0,
+        financing_cash_flow=-90.0,
+        free_cash_flow=220.0,
     )
 
     ratios = FinancialRatiosData(
-        roe=round((net_inc / max(equity, 1.0)) * 100, 1),
-        roa=round((net_inc / max(total_assets, 1.0)) * 100, 1),
-        quick_ratio=round(float(f_ctx.get("current_ratio") or 1.45) * 0.8, 2),
-        interest_coverage=float(f_ctx.get("interest_coverage") or 4.5),
+        roe=round((net_inc / equity) * 100, 2),  # 240 / 2000 = 12.0%
+        roa=round((net_inc / total_assets) * 100, 2),  # 240 / 8500 = 2.82%
+        quick_ratio=round((curr_assets - 300.0) / curr_liab, 2),  # (1200 - 300)/600 = 1.5x
+        interest_coverage=SYNTHETIC_INDIAN_COMPANY["ebitda_interest_coverage"],  # 4.0x
     )
 
     corporate = CorporateFinancialInput(
@@ -91,31 +100,31 @@ async def get_forecasts(company_id: str) -> dict:
     )
 
     macro_detail = MacroIndustryDetail(
-        gdp_growth=2.4,
-        inflation_rate=2.8,
-        interest_rate=4.75,
-        treasury_rate=4.25,
-        currency_stability=88.5,
-        industry_growth_rate=7.8,
-        market_sentiment="Cautiously Optimistic",
+        gdp_growth=6.8,
+        inflation_rate=4.8,
+        interest_rate=6.50,
+        treasury_rate=7.05,
+        currency_stability=85.2,
+        industry_growth_rate=8.5,
+        market_sentiment="Positive",
         competition_level="Moderate",
         country_risk={
-            "rating": "AAA",
-            "score": 88,
+            "rating": "BBB-",
+            "score": 68,
             "outlook": "Stable",
-            "description": "Strong sovereign institutional framework with investment grade rating.",
+            "description": f"{SYNTHETIC_DATA_LABEL} Resilient Indian macroeconomic growth outlook.",
         },
         historical_trends=[
-            {"year": "2022", "gdp": 2.1, "inflation": 6.5, "interest": 3.25, "treasury": 3.85},
-            {"year": "2023", "gdp": 2.5, "inflation": 4.1, "interest": 5.0, "treasury": 4.50},
-            {"year": "2024", "gdp": 2.8, "inflation": 3.2, "interest": 5.25, "treasury": 4.40},
-            {"year": "2025", "gdp": 2.6, "inflation": 2.9, "interest": 4.75, "treasury": 4.25},
-            {"year": "2026 (F)", "gdp": 2.4, "inflation": 2.8, "interest": 4.50, "treasury": 4.15},
+            {"year": "2022", "gdp": 7.2, "inflation": 6.7, "interest": 4.90, "treasury": 7.30},
+            {"year": "2023", "gdp": 7.0, "inflation": 5.4, "interest": 6.50, "treasury": 7.20},
+            {"year": "2024", "gdp": 6.8, "inflation": 4.9, "interest": 6.50, "treasury": 7.10},
+            {"year": "2025", "gdp": 6.7, "inflation": 4.6, "interest": 6.25, "treasury": 7.00},
+            {"year": "2026 (F)", "gdp": 6.8, "inflation": 4.5, "interest": 6.00, "treasury": 6.90},
         ],
         industry_segments=[
-            {"segment": f_ctx.get("sector") or "Core Operations", "growth_rate": 8.2},
-            {"segment": "Ancillary & Services", "growth_rate": 6.5},
-            {"segment": "Digital Transformation", "growth_rate": 14.1},
+            {"segment": "Domestic Infrastructure", "growth_rate": 9.4},
+            {"segment": "Automotive & Industrial Steel", "growth_rate": 8.1},
+            {"segment": "Renewable Engineering", "growth_rate": 12.6},
         ],
     )
 

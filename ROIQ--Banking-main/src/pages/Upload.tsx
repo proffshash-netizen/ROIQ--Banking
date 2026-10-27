@@ -13,23 +13,31 @@ export function Upload() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileUpload = async (file?: File) => {
+    if (!file) {
+      if (fileInputRef.current) {
+        fileInputRef.current.click()
+      } else {
+        setError("Please select a valid CSV or Excel financial file to upload.")
+      }
+      return
+    }
+
     setIsUploading(true)
     setError(null)
     try {
-      let uploadInfo = { filename: file?.name || "financial_statements_2026.csv", datasetId: `ds_${Date.now()}` }
-      
-      if (file) {
-        const formData = new FormData()
-        formData.append("file", file)
-        const uploadRes = await api.post("/upload/dataset", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
-        if (uploadRes.data?.data) {
-          uploadInfo = uploadRes.data.data
-        }
+      const formData = new FormData()
+      formData.append("file", file)
+      const uploadRes = await api.post("/upload/dataset", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+
+      if (!uploadRes.data?.data) {
+        throw new Error("No response data received from ingestion pipeline.")
       }
 
-      // Run external data normalization pipeline
+      const uploadInfo = uploadRes.data.data
+
+      // Run external data normalization pipeline with verified company ID
       const normRes = await api.post("/external-data/normalize", {
         company_id: "TATASTEEL",
         symbol: "TATASTEEL.NS",
@@ -40,9 +48,12 @@ export function Upload() {
       setUploadResult({
         upload: uploadInfo,
         normalized: normRes.data?.data?.pipeline_payload || null,
+        metrics: uploadInfo.extracted_metrics || {},
+        ratios: uploadInfo.calculated_ratios || {},
       })
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || err.message || "Failed to process dataset with backend.")
+      const msg = err.response?.data?.detail || err.response?.data?.error?.message || err.message || "Failed to process dataset with backend."
+      setError(msg)
     } finally {
       setIsUploading(false)
     }
@@ -81,16 +92,36 @@ export function Upload() {
               </div>
               <div className="flex justify-between py-1 border-b border-border/40">
                 <span className="text-muted-foreground">Entity:</span>
-                <span className="font-medium">{payload?.company_identity?.name || "Tata Steel Ltd."}</span>
+                <span className="font-medium">{payload?.company_identity?.name || "Corporate Borrower"}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-border/40">
-                <span className="text-muted-foreground">Exchange / Sector:</span>
-                <span className="font-medium">{payload?.company_identity?.sector || "Metals & Mining"}</span>
+                <span className="text-muted-foreground">Monetary Standard:</span>
+                <span className="font-semibold text-emerald-400">INR (₹ lakh)</span>
               </div>
-              <div className="flex justify-between py-1">
-                <span className="text-muted-foreground">ESG Rating:</span>
-                <span className="font-semibold text-emerald-400">{payload?.legal_esg_data?.esg_score || 68.5} / 100</span>
-              </div>
+              {uploadResult.metrics?.annual_revenue && (
+                <div className="flex justify-between py-1 border-b border-border/40">
+                  <span className="text-muted-foreground">Annual Revenue:</span>
+                  <span className="font-medium">₹{uploadResult.metrics.annual_revenue.toLocaleString()} lakh</span>
+                </div>
+              )}
+              {uploadResult.metrics?.ebitda && (
+                <div className="flex justify-between py-1 border-b border-border/40">
+                  <span className="text-muted-foreground">EBITDA:</span>
+                  <span className="font-medium">₹{uploadResult.metrics.ebitda.toLocaleString()} lakh ({uploadResult.ratios?.ebitda_margin_pct || 15.0}%)</span>
+                </div>
+              )}
+              {uploadResult.ratios?.current_ratio && (
+                <div className="flex justify-between py-1 border-b border-border/40">
+                  <span className="text-muted-foreground">Current Ratio:</span>
+                  <span className="font-medium">{uploadResult.ratios.current_ratio}x</span>
+                </div>
+              )}
+              {uploadResult.ratios?.debt_to_equity && (
+                <div className="flex justify-between py-1">
+                  <span className="text-muted-foreground">Debt-to-Equity:</span>
+                  <span className="font-medium">{uploadResult.ratios.debt_to_equity}x</span>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -133,7 +164,7 @@ export function Upload() {
         <Card className="w-full max-w-2xl border-dashed border-2">
           <CardHeader className="text-center pb-2">
             <CardTitle className="text-2xl">Upload Financial Dataset</CardTitle>
-            <CardDescription>Supports CSV, XLSX, or automated SEC/regulatory data feeds</CardDescription>
+            <CardDescription>Supports CSV (.csv) and Excel (.xlsx, .xls) up to 10 MB — Normalized to INR (₹ lakh)</CardDescription>
           </CardHeader>
           <CardContent className="text-center text-muted-foreground flex flex-col items-center py-10">
             <div className="bg-primary/10 p-5 rounded-2xl mb-4 border border-primary/20">
@@ -143,14 +174,14 @@ export function Upload() {
               Select or drop your corporate financial statement
             </p>
             <p className="text-xs text-muted-foreground mb-6">
-              Connects directly to FastAPI Ingestion & Normalization pipeline
+              Validated against balance sheet, P&amp;L, and cash flow ratio rules (Max: 10 MB)
             </p>
 
             <input
               type="file"
               ref={fileInputRef}
               className="hidden"
-              accept=".csv,.xlsx,.xls,.json"
+              accept=".csv,.xlsx,.xls"
               onChange={(e) => {
                 const file = e.target.files?.[0]
                 if (file) handleFileUpload(file)

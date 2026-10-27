@@ -48,12 +48,7 @@ export function Login() {
       }
       setError(response.data?.error?.message || "Invalid credentials.")
     } catch (err: any) {
-      if (data.email === "cco@roiq.ai" && (data.password === "password123" || data.password === "password")) {
-        login({ id: "usr_123", name: "Thomas Shelby", email: "cco@roiq.ai", role: "Corporate Credit Officer" }, "mock_jwt_token_12345")
-        navigate("/")
-        return
-      }
-      setError(err.response?.data?.error?.message || err.message || "Failed to authenticate.")
+      setError(err.response?.data?.error?.message || err.response?.data?.detail || err.message || "Failed to authenticate.")
     } finally {
       setIsLoading(false)
     }
@@ -185,7 +180,7 @@ export function Login() {
 
             <div className="mt-4 pt-4 border-t border-[#D9E1EA]">
               <p className="text-[11px] text-[#5F6F85] text-center">
-                Default credentials: cco@roiq.ai / password123
+                Demo access: cco@roiq.ai / Officer@Roiq2026! (or sandbox: demo_officer / Demo@Sandbox2026)
               </p>
             </div>
           </div>

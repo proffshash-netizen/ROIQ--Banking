@@ -1,21 +1,38 @@
-import os
-import uuid
-from fastapi import APIRouter, File, UploadFile
-from ....core.responses import build_success_response
+from typing import Annotated, Optional
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+
+from ..dependencies import get_current_user
+from ....core.responses import build_error_response, build_success_response
+from ....schemas.auth import UserContext
+from ....services.ingestion_service import IngestionService
 
 router = APIRouter(tags=["Upload"])
 
-@router.post("/dataset", response_model=dict, summary="Upload financial dataset")
-async def upload_dataset(file: UploadFile = File(...)) -> dict:
-    dataset_id = str(uuid.uuid4())
-    os.makedirs("uploads", exist_ok=True)
-    upload_path = os.path.join("uploads", f"{dataset_id}_{file.filename}")
-    content = await file.read()
-    with open(upload_path, "wb") as buffer:
-        buffer.write(content)
-    return build_success_response({
-        "status": "uploaded",
-        "datasetId": dataset_id,
-        "filename": file.filename,
-        "sizeBytes": len(content),
-    })
+ingestion_service = IngestionService()
+
+
+@router.post("/dataset", response_model=dict, summary="Upload and ingest financial dataset")
+async def upload_dataset(
+    file: UploadFile = File(...),
+    current_user: Optional[UserContext] = Depends(get_current_user),
+) -> dict:
+    try:
+        content = await file.read()
+        user_id = current_user.username if current_user else "anonymous"
+        result = ingestion_service.process_upload(
+            filename=file.filename or "dataset.csv",
+            content=content,
+            content_type=file.content_type,
+            user_id=user_id,
+        )
+        return build_success_response(result)
+    except ValueError as val_err:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(val_err),
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Ingestion failed: {str(exc)}",
+        )

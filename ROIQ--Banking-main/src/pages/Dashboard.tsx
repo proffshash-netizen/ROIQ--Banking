@@ -18,33 +18,33 @@ export function Dashboard() {
     fetchDashboardKPIs().then(kpis => updateKPIs(kpis))
   }, [updateKPIs])
 
-  // Portfolio calculations
+  // Portfolio calculations in ₹ Lakh
   const companiesCount = companies.length || 9
-  const toMillion = (v: string) => {
-    if (v.includes("B")) return parseFloat(v.replace(/[^0-9.]/g, "")) * 1000
-    if (v.includes("M")) return parseFloat(v.replace(/[^0-9.]/g, ""))
-    return 0
+  const toLakh = (v: string) => {
+    if (!v) return 450
+    const clean = v.replace(/[^0-9.]/g, "")
+    const num = parseFloat(clean) || 0
+    if (v.toLowerCase().includes("cr")) return num * 100 // 1 Cr = 100 Lakh
+    if (v.toLowerCase().includes("b")) return num * 100 // normalize B to Lakh
+    if (v.toLowerCase().includes("m")) return num * 10 // normalize M to Lakh
+    return num
   }
-  const totalExposure = companies.reduce((s, c) => s + toMillion(c.loanExposure), 0)
-  const formattedTotal = totalExposure >= 1000
-    ? `₹${(totalExposure / 1000).toFixed(2)}B`
-    : `₹${totalExposure.toFixed(0)}M`
+  const totalExposure = companies.reduce((s, c) => s + toLakh(c.loanExposure), 0)
+  const formattedTotal = `₹${totalExposure.toLocaleString("en-IN", { maximumFractionDigits: 1 })} lakh`
 
   const highRiskCos = companies.filter(c => c.riskLevel === "high" || c.riskLevel === "critical")
-  const highRiskExposure = highRiskCos.reduce((s, c) => s + toMillion(c.loanExposure), 0)
-  const formattedHighRisk = highRiskExposure >= 1000
-    ? `₹${(highRiskExposure / 1000).toFixed(2)}B`
-    : `₹${highRiskExposure.toFixed(0)}M`
+  const highRiskExposure = highRiskCos.reduce((s, c) => s + toLakh(c.loanExposure), 0)
+  const formattedHighRisk = `₹${highRiskExposure.toLocaleString("en-IN", { maximumFractionDigits: 1 })} lakh`
 
   const avgScore = companies.length
     ? (companies.reduce((s, c) => s + (c.creditScore || 68), 0) / companies.length).toFixed(1)
     : "68.1"
   const pendingReviews = highRiskCos.length || 3
 
-  // Sector breakdown
+  // Sector breakdown (₹ Lakh)
   const sectorData: Record<string, { count: number; exposure: number }> = {}
   companies.forEach(c => {
-    const val = toMillion(c.loanExposure)
+    const val = toLakh(c.loanExposure)
     if (!sectorData[c.sector]) sectorData[c.sector] = { count: 0, exposure: 0 }
     sectorData[c.sector].count += 1
     sectorData[c.sector].exposure += val
